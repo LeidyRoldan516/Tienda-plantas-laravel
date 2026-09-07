@@ -289,9 +289,9 @@ La Wiki del repositorio contiene:
 
 ## Integrantes
 
-- Leidy Dayhana Roldán.
-- Nombre completo de Simón.
-- Nombre completo de David.
+- Leidy Dayhana Roldán
+- Simon Martinez Gomez
+- David Zapata Orozco
 
 ## Estado
 
