@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Autor: Simon Martinez Gomez
+ */
+
 namespace Database\Factories;
 
 use App\Models\User;
@@ -29,6 +33,7 @@ class UserFactory extends Factory
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
+            'rol' => 'cliente',
             'remember_token' => Str::random(10),
         ];
     }
@@ -40,6 +45,26 @@ class UserFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
+        ]);
+    }
+
+    /**
+     * Usuario con rol de administrador.
+     */
+    public function administrador(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'rol' => 'administrador',
+        ]);
+    }
+
+    /**
+     * Usuario con rol de cliente.
+     */
+    public function cliente(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'rol' => 'cliente',
         ]);
     }
 }

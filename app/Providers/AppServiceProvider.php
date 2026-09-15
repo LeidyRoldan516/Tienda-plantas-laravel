@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Autor: Simon Martinez Gomez
+ */
+
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
@@ -19,6 +23,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        $this->app->useLangPath(resource_path('lang'));
     }
 }

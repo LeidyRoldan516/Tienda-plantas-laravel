@@ -33,6 +33,7 @@ Sin embargo, el pago mediante tarjeta de crédito y PSE no se implementará dura
 - PHP.
 - Laravel 12.
 - MySQL mediante MAMP.
+- Laravel Breeze (stack Blade) para autenticación.
 - Blade.
 - HTML.
 - CSS.
@@ -170,13 +171,52 @@ Después de modificar `.env`, ejecutar:
 php artisan config:clear
 ```
 
-### 6. Ejecutar las migraciones
+### 6. Ejecutar las migraciones y el seeder
 
 ```bash
 php artisan migrate
+php artisan db:seed
 ```
 
-Si el comando termina sin errores, Laravel quedó conectado correctamente a MySQL.
+Si el comando termina sin errores, Laravel quedó conectado correctamente a MySQL y se crearon los usuarios de prueba.
+
+También se puede ejecutar en un solo paso:
+
+```bash
+php artisan migrate --seed
+```
+
+## Autenticación
+
+La autenticación usa **Laravel Breeze** (Blade). Existen dos roles: `cliente` y `administrador`.
+
+- El registro público (`/register`) crea siempre usuarios con `rol = cliente`.
+- El administrador inicial se crea con el seeder (no se elige rol en el formulario).
+- Las rutas `/admin/*` requieren middleware `auth` + `admin`.
+- El catálogo público y la home no exigen sesión; el dashboard del cliente sí.
+
+### Credenciales de prueba (seeder)
+
+| Rol | Correo | Contraseña |
+|---|---|---|
+| Administrador | `admin@tienda.com` | `password` |
+| Cliente | `cliente@tienda.com` | `password` |
+
+Estas credenciales son solo para desarrollo local.
+
+### Rutas de autenticación
+
+| Acción | Ruta | Protección |
+|---|---|---|
+| Login | `/login` | guest |
+| Registro | `/register` | guest |
+| Logout | `POST /logout` | auth |
+| Dashboard cliente | `/dashboard` | auth |
+| Panel admin | `/admin` | auth + admin |
+
+Tras el login, el administrador va a `/admin` y el cliente a `/dashboard`. Un cliente que intente entrar a `/admin` recibe `403`.
+
+El locale por defecto es `es` (`APP_LOCALE=es`). Los textos de la interfaz están en `resources/lang/es`.
 
 ## Ejecución del proyecto
 
@@ -213,13 +253,14 @@ Las dos terminales deben permanecer abiertas durante el desarrollo.
 | Página principal | `/` |
 | Inicio de sesión | `/login` |
 | Registro | `/register` |
+| Dashboard cliente | `/dashboard` |
 | Catálogo | `/catalogo` |
 | Carrito | `/carrito` |
 | Pedidos | `/pedidos` |
 | Recomendaciones | `/recomendaciones` |
 | Panel administrativo | `/admin` |
 
-Las rutas diferentes de `/` se habilitarán progresivamente durante el desarrollo.
+Las rutas de catálogo, carrito, pedidos y recomendaciones se habilitarán progresivamente durante el desarrollo.
 
 ## Datos ficticios
 

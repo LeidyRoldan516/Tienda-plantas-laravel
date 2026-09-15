@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Autor: Simon Martinez Gomez
+ */
+
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -22,6 +26,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'rol',
     ];
 
     /**
@@ -81,5 +86,35 @@ class User extends Authenticatable
     {
         // Usa setAttribute para que el cast "hashed" aplique el hash.
         $this->setAttribute('password', $password);
+    }
+
+    public function getRol(): string
+    {
+        return $this->attributes['rol'];
+    }
+
+    public function setRol(string $rol): void
+    {
+        $this->attributes['rol'] = $rol;
+    }
+
+    public function isAdministrador(): bool
+    {
+        return $this->getRol() === 'administrador';
+    }
+
+    public function isCliente(): bool
+    {
+        return $this->getRol() === 'cliente';
+    }
+
+    /**
+     * Ruta de inicio según el rol del usuario autenticado.
+     */
+    public function rutaInicio(): string
+    {
+        return $this->isAdministrador()
+            ? route('admin.dashboard', absolute: false)
+            : route('cliente.dashboard', absolute: false);
     }
 }
