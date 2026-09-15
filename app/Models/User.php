@@ -1,5 +1,6 @@
 <?php
 
+
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -45,5 +46,41 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function getId(): int
+    {
+        return $this->attributes['id'];
+    }
+
+    public function getName(): string
+    {
+        return $this->attributes['name'];
+    }
+
+    public function setName(string $name): void
+    {
+        $this->attributes['name'] = $name;
+    }
+
+    public function getEmail(): string
+    {
+        return $this->attributes['email'];
+    }
+
+    public function setEmail(string $email): void
+    {
+        $this->attributes['email'] = $email;
+    }
+
+    public function getPassword(): string
+    {
+        return $this->attributes['password'];
+    }
+
+    public function setPassword(string $password): void
+    {
+        // Usa setAttribute para que el cast "hashed" aplique el hash.
+        $this->setAttribute('password', $password);
     }
 }
