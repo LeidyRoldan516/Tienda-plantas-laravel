@@ -3,7 +3,6 @@
 /**
  * Autores:
  * - David Zapata Orozco
- * - Simon Martinez Gomez
  */
 
 namespace App\Models;
