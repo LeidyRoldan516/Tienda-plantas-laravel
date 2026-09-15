@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Autor: Simon Martinez Gomez
+ */
+
 namespace Database\Seeders;
 
 use App\Models\User;
@@ -15,11 +19,22 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        User::query()->updateOrCreate(
+            ['email' => 'admin@tienda.com'],
+            [
+                'name' => 'Administrador',
+                'password' => 'password',
+                'rol' => 'administrador',
+            ]
+        );
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        User::query()->updateOrCreate(
+            ['email' => 'cliente@tienda.com'],
+            [
+                'name' => 'Cliente de prueba',
+                'password' => 'password',
+                'rol' => 'cliente',
+            ]
+        );
     }
 }
