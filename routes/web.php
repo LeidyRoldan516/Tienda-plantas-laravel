@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Admin\CategoriaController;
+use App\Http\Controllers\Admin\PlantaController;
 use App\Http\Controllers\CarritoController;
 use App\Http\Controllers\CatalogoController;
 use App\Http\Controllers\PedidoController;
@@ -34,3 +36,10 @@ Route::middleware('auth')->group(function () {
     Route::patch('/pedidos/{pedido}/cancelar', [PedidoController::class, 'cancelar'])
         ->name('pedidos.cancelar');
 });
+Route::middleware(['auth', 'admin'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+        Route::resource('categorias', CategoriaController::class);
+        Route::resource('plantas', PlantaController::class);
+    });
