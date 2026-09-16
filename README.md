@@ -6,9 +6,9 @@ Aplicación web para la consulta, recomendación y compra de plantas, desarrolla
 
 Tienda de plantas permitirá que los clientes consulten el catálogo, busquen plantas, administren un carrito de compras y creen pedidos.
 
-La aplicación contará con recomendaciones personalizadas mediante un servicio externo de inteligencia artificial. Para generar las recomendaciones se tendrán en cuenta aspectos como la experiencia del cliente, el espacio disponible, la iluminación, el tiempo de cuidado y la presencia de mascotas.
+La aplicación incluye recomendaciones personalizadas mediante Google Gemini. El cliente registra sus preferencias (experiencia, espacio, iluminación, tiempo de cuidado y mascotas) y el sistema sugiere plantas existentes del catálogo.
 
-El sistema tendrá dos secciones principales:
+El sistema tiene dos secciones principales:
 
 - Sección para clientes.
 - Panel de administración.
@@ -18,9 +18,9 @@ El sistema tendrá dos secciones principales:
 1. Consulta y búsqueda de plantas.
 2. Administración del carrito de compras.
 3. Creación y consulta de pedidos.
-4. Recomendaciones personalizadas mediante inteligencia artificial.
+4. Recomendaciones personalizadas mediante inteligencia artificial (Gemini).
 
-La cuarta funcionalidad será la funcionalidad diferenciadora del proyecto.
+La cuarta funcionalidad es la funcionalidad diferenciadora del proyecto.
 
 ## Alcance de los pagos
 
@@ -34,6 +34,7 @@ Sin embargo, el pago mediante tarjeta de crédito y PSE no se implementará dura
 - Laravel 12.
 - MySQL mediante MAMP.
 - Laravel Breeze (stack Blade) para autenticación.
+- Google Gemini (API de recomendaciones).
 - Blade.
 - HTML.
 - CSS.
@@ -186,6 +187,54 @@ También se puede ejecutar en un solo paso:
 php artisan migrate --seed
 ```
 
+## Configuración de Gemini (recomendaciones)
+
+Las recomendaciones usan la API de Google Gemini. Cada integrante debe configurar su propia clave en el archivo `.env` local (nunca subirla a GitHub).
+
+### 1. Obtener una clave de API
+
+1. Entrar a [Google AI Studio](https://aistudio.google.com/apikey).
+2. Crear una API key.
+3. Copiarla únicamente en el `.env` local.
+
+### 2. Variables en `.env`
+
+```env
+GEMINI_API_KEY=
+GEMINI_BASE_URL=https://generativelanguage.googleapis.com/v1beta
+GEMINI_MODEL=gemini-3.6-flash
+```
+
+Después de guardar la clave:
+
+```bash
+php artisan config:clear
+```
+
+Sin `GEMINI_API_KEY` la aplicación seguirá funcionando, pero al generar recomendaciones mostrará un mensaje indicando que el servicio no está configurado.
+
+## Recomendaciones personalizadas
+
+Flujo del cliente autenticado:
+
+1. Abrir `/recomendaciones`.
+2. Completar y guardar el perfil de preferencias.
+3. Pulsar **Generar recomendación**.
+4. Revisar la explicación y las plantas sugeridas (solo del catálogo con stock).
+5. Consultar el historial de recomendaciones anteriores.
+
+Componentes principales:
+
+| Pieza | Ubicación |
+|---|---|
+| Controlador | `app/Http/Controllers/RecomendacionController.php` |
+| Servicio Gemini | `app/Services/RecomendacionIAService.php` |
+| Preferencias | `app/Models/PerfilPreferencias.php` |
+| Recomendación | `app/Models/Recomendacion.php` |
+| Vistas | `resources/views/recomendaciones/` |
+
+La IA solo puede recomendar plantas existentes en el inventario. Si Gemini no responde o la respuesta es inválida, se muestra un mensaje al cliente y la tienda sigue operativa.
+
 ## Autenticación
 
 La autenticación usa **Laravel Breeze** (Blade). Existen dos roles: `cliente` y `administrador`.
@@ -248,19 +297,20 @@ Las dos terminales deben permanecer abiertas durante el desarrollo.
 
 ## Rutas principales
 
-| Sección | Ruta |
-|---|---|
-| Página principal | `/` |
-| Inicio de sesión | `/login` |
-| Registro | `/register` |
-| Dashboard cliente | `/dashboard` |
-| Catálogo | `/catalogo` |
-| Carrito | `/carrito` |
-| Pedidos | `/pedidos` |
-| Recomendaciones | `/recomendaciones` |
-| Panel administrativo | `/admin` |
-
-Las rutas de catálogo, carrito, pedidos y recomendaciones se habilitarán progresivamente durante el desarrollo.
+| Sección | Ruta | Protección |
+|---|---|---|
+| Página principal | `/` | pública |
+| Inicio de sesión | `/login` | guest |
+| Registro | `/register` | guest |
+| Dashboard cliente | `/dashboard` | auth |
+| Catálogo | `/catalogo` | pública |
+| Carrito | `/carrito` | auth |
+| Pedidos | `/pedidos` | auth |
+| Recomendaciones | `/recomendaciones` | auth |
+| Guardar preferencias | `POST /recomendaciones/preferencias` | auth |
+| Generar recomendación | `POST /recomendaciones/generar` | auth |
+| Detalle de recomendación | `/recomendaciones/{recomendacion}` | auth |
+| Panel administrativo | `/admin` | auth + admin |
 
 ## Datos ficticios
 
