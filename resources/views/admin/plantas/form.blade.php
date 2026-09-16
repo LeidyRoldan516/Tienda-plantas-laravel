@@ -1,39 +1,12 @@
-@if ($errors->any())
-    <div style="color: #b91c1c">
-        <p>Revisa estos campos:</p>
-        <ul>
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-@endif
+{{-- Autor: Simon Martinez Gomez --}}
+<div class="admin-form-grid">
+    <label class="admin-campo">
+        <span>Nombre</span>
+        <input type="text" name="nombre" required value="{{ old('nombre', $planta->nombre ?? '') }}">
+    </label>
 
-<p>
-    <label>Nombre<br>
-        <input type="text" name="nombre" required
-               value="{{ old('nombre', $planta->nombre ?? '') }}">
-    </label>
-</p>
-<p>
-    <label>Descripción<br>
-        <textarea name="descripcion" required>{{ old('descripcion', $planta->descripcion ?? '') }}</textarea>
-    </label>
-</p>
-<p>
-    <label>Precio (pesos)<br>
-        <input type="number" name="precio" min="0" step="1" required
-               value="{{ old('precio', $planta->precio ?? '') }}">
-    </label>
-</p>
-<p>
-    <label>Unidades disponibles<br>
-        <input type="number" name="stock" min="0" step="1" required
-               value="{{ old('stock', $planta->stock ?? '') }}">
-    </label>
-</p>
-<p>
-    <label>Categoría<br>
+    <label class="admin-campo">
+        <span>Categoría</span>
         <select name="categoria_id" required>
             <option value="">Selecciona una categoría</option>
             @foreach ($categorias as $categoria)
@@ -44,11 +17,31 @@
             @endforeach
         </select>
     </label>
-</p>
-<p>
-    <label>URL de imagen (opcional)<br>
-        <input type="url" name="imagen_url"
-               value="{{ old('imagen_url', $planta->imagen_url ?? '') }}">
+
+    <label class="admin-campo">
+        <span>Precio (pesos)</span>
+        <input type="number" name="precio" min="0" step="1" required
+            value="{{ old('precio', $planta->precio ?? '') }}">
     </label>
-</p>
-<button type="submit">Guardar</button>
+
+    <label class="admin-campo">
+        <span>Unidades disponibles</span>
+        <input type="number" name="stock" min="0" step="1" required
+            value="{{ old('stock', $planta->stock ?? 0) }}">
+    </label>
+
+    <label class="admin-campo admin-campo-completo">
+        <span>Descripción</span>
+        <textarea name="descripcion" rows="3" required>{{ old('descripcion', $planta->descripcion ?? '') }}</textarea>
+    </label>
+
+    <label class="admin-campo admin-campo-completo">
+        <span>URL de imagen (opcional)</span>
+        <input type="url" name="imagen_url" placeholder="https://..."
+            value="{{ old('imagen_url', $planta->imagen_url ?? '') }}">
+    </label>
+</div>
+
+<div class="admin-acciones-bar">
+    <button type="submit" class="admin-btn">Guardar planta</button>
+</div>

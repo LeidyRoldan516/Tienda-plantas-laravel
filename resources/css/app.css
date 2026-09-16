@@ -1,3 +1,43 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        @apply bg-lienzo text-marca-900 antialiased;
+    }
+
+    ::selection {
+        @apply bg-marca-200 text-marca-900;
+    }
+}
+
+@layer components {
+    .contenedor {
+        @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
+    }
+
+    .btn-primario {
+        @apply inline-flex items-center justify-center rounded-full bg-marca-500 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-marca-600 focus:outline-none focus:ring-2 focus:ring-marca-300 focus:ring-offset-2;
+    }
+
+    .btn-secundario {
+        @apply inline-flex items-center justify-center rounded-full border border-marca-300 bg-white px-5 py-2.5 text-sm font-semibold text-marca-800 transition hover:bg-marca-50 focus:outline-none focus:ring-2 focus:ring-marca-200 focus:ring-offset-2;
+    }
+
+    .campo {
+        @apply w-full rounded-xl border-marca-200 bg-white text-marca-900 shadow-sm focus:border-marca-500 focus:ring-marca-500;
+    }
+
+    .nav-enlace {
+        @apply text-sm font-medium text-marca-700/80 transition hover:text-marca-900;
+    }
+
+    .nav-enlace-activo {
+        @apply text-sm font-semibold text-marca-500;
+    }
+}

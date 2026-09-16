@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
                 'name' => 'Administrador',
                 'password' => 'password',
                 'rol' => 'administrador',
+                'email_verified_at' => now(),
             ]
         );
 
@@ -34,7 +35,13 @@ class DatabaseSeeder extends Seeder
                 'name' => 'Cliente de prueba',
                 'password' => 'password',
                 'rol' => 'cliente',
+                'email_verified_at' => now(),
             ]
         );
+
+        $this->call([
+            PlantasSeeder::class,
+            DemoComprasSeeder::class,
+        ]);
     }
 }

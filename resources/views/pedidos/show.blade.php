@@ -1,62 +1,70 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Pedido #{{ $pedido->id }}</title>
-    <style>
-        body { font-family: Arial, sans-serif; max-width: 900px; margin: 30px auto; padding: 0 16px; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 12px; border-bottom: 1px solid #ddd; text-align: left; }
-        button { padding: 10px; cursor: pointer; }
-    </style>
-</head>
-<body>
-    <a href="{{ route('pedidos.index') }}">← Mis pedidos</a>
-    <h1>Pedido #{{ $pedido->id }}</h1>
+<x-tienda-layout>
+    <x-slot name="title">Pedido #{{ $pedido->id }} · El Rincón de las Plantas</x-slot>
 
-    @if (session('mensaje'))
-        <p>{{ session('mensaje') }}</p>
-    @endif
+    <div class="contenedor py-12">
+        <a href="{{ route('pedidos.index') }}" class="nav-enlace inline-flex items-center gap-2">
+            ← Mis pedidos
+        </a>
 
-    @if ($errors->any())
-        @foreach ($errors->all() as $error)
-            <p>{{ $error }}</p>
-        @endforeach
-    @endif
+        <div class="mt-8 mb-10">
+            <p class="text-sm font-semibold uppercase tracking-[0.2em] text-marca-300">Pedido</p>
+            <h1 class="mt-2 text-3xl font-semibold text-marca-900">Pedido #{{ $pedido->id }}</h1>
+            <div class="mt-4 flex flex-wrap gap-4 text-sm text-marca-700/80">
+                <p>Fecha: <span class="font-medium text-marca-900">{{ $pedido->fecha }}</span></p>
+                <p>
+                    Estado:
+                    <span class="inline-flex rounded-full bg-marca-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-marca-700">
+                        {{ $pedido->estado }}
+                    </span>
+                </p>
+            </div>
+        </div>
 
-    <p><strong>Fecha:</strong> {{ $pedido->fecha }}</p>
-    <p><strong>Estado:</strong> {{ ucfirst($pedido->estado) }}</p>
+        <div class="overflow-hidden rounded-3xl border border-marca-100 bg-white">
+            <div class="overflow-x-auto">
+                <table class="min-w-full text-left text-sm">
+                    <thead class="border-b border-marca-100 bg-marca-50/60 text-marca-700">
+                        <tr>
+                            <th class="px-5 py-4 font-medium">Planta</th>
+                            <th class="px-5 py-4 font-medium">Cantidad</th>
+                            <th class="px-5 py-4 font-medium">Precio unitario</th>
+                            <th class="px-5 py-4 font-medium">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($pedido->items as $item)
+                            <tr class="border-b border-marca-50 last:border-0">
+                                <td class="px-5 py-4 font-medium text-marca-900">
+                                    {{ $item->planta?->nombre ?? 'Planta no disponible' }}
+                                </td>
+                                <td class="px-5 py-4 text-marca-700">{{ $item->cantidad }}</td>
+                                <td class="px-5 py-4 text-marca-700">
+                                    $ {{ number_format($item->precio_unitario, 0, ',', '.') }}
+                                </td>
+                                <td class="px-5 py-4 font-semibold text-marca-900">
+                                    $ {{ number_format($item->subtotal, 0, ',', '.') }}
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Planta</th>
-                <th>Cantidad</th>
-                <th>Precio unitario</th>
-                <th>Subtotal</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($pedido->items as $item)
-                <tr>
-                    <td>{{ $item->planta?->nombre ?? 'Planta no disponible' }}</td>
-                    <td>{{ $item->cantidad }}</td>
-                    <td>$ {{ number_format($item->precio_unitario, 0, ',', '.') }}</td>
-                    <td>$ {{ number_format($item->subtotal, 0, ',', '.') }}</td>
-                </tr>
-            @endforeach
-        </tbody>
-    </table>
+        <div class="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <p class="text-xl font-semibold text-marca-900">
+                Total: $ {{ number_format($pedido->total, 0, ',', '.') }}
+            </p>
 
-    <h2>Total: $ {{ number_format($pedido->total, 0, ',', '.') }}</h2>
-
-    @if ($pedido->estado === 'pendiente')
-        <form action="{{ route('pedidos.cancelar', $pedido) }}" method="POST">
-            @csrf
-            @method('PATCH')
-            <button type="submit">Cancelar pedido</button>
-        </form>
-    @endif
-</body>
-</html>
+            @if ($pedido->estado === 'pendiente')
+                <form action="{{ route('pedidos.cancelar', $pedido) }}" method="POST">
+                    @csrf
+                    @method('PATCH')
+                    <button type="submit" class="btn-secundario !border-rose-200 !text-rose-700 hover:!bg-rose-50">
+                        Cancelar pedido
+                    </button>
+                </form>
+            @endif
+        </div>
+    </div>
+</x-tienda-layout>

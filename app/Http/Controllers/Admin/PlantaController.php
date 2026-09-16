@@ -29,7 +29,7 @@ class PlantaController extends Controller
     {
         Planta::create($this->datosValidados($request));
 
-        return redirect()->route('admin.plantas.index')
+        return redirect()->route('admin.dashboard')
             ->with('success', 'Planta creada correctamente.');
     }
 
@@ -59,7 +59,7 @@ class PlantaController extends Controller
     public function destroy(Planta $planta): RedirectResponse
     {
         if ($planta->itemsPedido()->exists() || $planta->itemsCarrito()->exists()) {
-            return redirect()->route('admin.plantas.index')
+            return redirect()->back()
                 ->with('error', 'No se puede eliminar una planta presente en pedidos o carritos.');
         }
 
