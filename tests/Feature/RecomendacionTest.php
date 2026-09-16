@@ -11,6 +11,7 @@ use App\Models\Planta;
 use App\Models\User;
 use App\Services\RecomendacionIAService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class RecomendacionTest extends TestCase
@@ -124,5 +125,89 @@ class RecomendacionTest extends TestCase
         $this->assertSame('Estas plantas encajan contigo.', $resultado['explicacion']);
         $this->assertCount(1, $resultado['plantas']);
         $this->assertSame($planta->id, $resultado['plantas'][0]['planta']->id);
+    }
+
+    public function test_generar_reintenta_cuando_gemini_esta_saturado(): void
+    {
+        config(['services.gemini.key' => 'test-key']);
+
+        $planta = Planta::query()->create([
+            'nombre' => 'Monstera',
+            'descripcion' => 'Planta de interior',
+            'precio' => 45000,
+            'stock' => 5,
+            'imagen_url' => null,
+            'categoria_id' => Categoria::query()->create(['nombre' => 'Interior'])->id,
+        ]);
+
+        Http::fake([
+            '*' => Http::sequence()
+                ->push(['error' => ['message' => 'high demand']], 503)
+                ->push([
+                    'candidates' => [[
+                        'content' => [
+                            'parts' => [[
+                                'text' => json_encode([
+                                    'explicacion' => 'Estas plantas te convienen.',
+                                    'plantas' => [
+                                        ['id' => $planta->id, 'motivo' => 'Fácil de cuidar'],
+                                    ],
+                                ]),
+                            ]],
+                        ],
+                    ]],
+                ]),
+        ]);
+
+        $cliente = User::factory()->create(['rol' => 'cliente']);
+        $cliente->perfilPreferencias()->create([
+            'experiencia' => 'principiante',
+            'espacio' => 'balcon',
+            'iluminacion' => 'media',
+            'tiempo_cuidado' => 'bajo',
+            'mascotas' => false,
+        ]);
+
+        $respuesta = $this->actingAs($cliente)->post(route('recomendaciones.generar'));
+
+        $respuesta->assertRedirect();
+        $this->assertDatabaseCount('recomendaciones', 1);
+        Http::assertSentCount(2);
+    }
+
+    public function test_generar_falla_si_todos_los_intentos_devuelven_error(): void
+    {
+        config(['services.gemini.key' => 'test-key']);
+
+        Planta::query()->create([
+            'nombre' => 'Monstera',
+            'descripcion' => 'Planta de interior',
+            'precio' => 45000,
+            'stock' => 5,
+            'imagen_url' => null,
+            'categoria_id' => Categoria::query()->create(['nombre' => 'Interior'])->id,
+        ]);
+
+        Http::fake([
+            '*' => Http::response(['error' => ['message' => 'high demand']], 503),
+        ]);
+
+        $cliente = User::factory()->create(['rol' => 'cliente']);
+        $cliente->perfilPreferencias()->create([
+            'experiencia' => 'principiante',
+            'espacio' => 'balcon',
+            'iluminacion' => 'media',
+            'tiempo_cuidado' => 'bajo',
+            'mascotas' => false,
+        ]);
+
+        $respuesta = $this->actingAs($cliente)
+            ->from(route('recomendaciones.index'))
+            ->post(route('recomendaciones.generar'));
+
+        $respuesta->assertRedirect(route('recomendaciones.index'));
+        $respuesta->assertSessionHas('error', __('messages.recomendaciones_error_servicio'));
+        $this->assertDatabaseCount('recomendaciones', 0);
+        Http::assertSentCount(3);
     }
 }

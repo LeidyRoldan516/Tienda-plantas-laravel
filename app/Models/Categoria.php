@@ -13,6 +13,21 @@ class Categoria extends Model
 
     protected $fillable = ['nombre'];
 
+    public function getId(): int
+    {
+        return $this->attributes['id'];
+    }
+
+    public function getNombre(): string
+    {
+        return $this->attributes['nombre'];
+    }
+
+    public function setNombre(string $nombre): void
+    {
+        $this->attributes['nombre'] = $nombre;
+    }
+
     public function plantas(): HasMany
     {
         return $this->hasMany(Planta::class);

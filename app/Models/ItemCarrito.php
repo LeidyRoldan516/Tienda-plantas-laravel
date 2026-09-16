@@ -16,6 +16,56 @@ class ItemCarrito extends Model
         'precio_unitario',
     ];
 
+    public function getId(): int
+    {
+        return $this->attributes['id'];
+    }
+
+    public function getCarritoComprasId(): int
+    {
+        return (int) $this->attributes['carrito_compras_id'];
+    }
+
+    public function setCarritoComprasId(int $carritoComprasId): void
+    {
+        $this->attributes['carrito_compras_id'] = $carritoComprasId;
+    }
+
+    public function getPlantaId(): int
+    {
+        return (int) $this->attributes['planta_id'];
+    }
+
+    public function setPlantaId(int $plantaId): void
+    {
+        $this->attributes['planta_id'] = $plantaId;
+    }
+
+    public function getCantidad(): int
+    {
+        return (int) $this->attributes['cantidad'];
+    }
+
+    public function setCantidad(int $cantidad): void
+    {
+        $this->attributes['cantidad'] = $cantidad;
+    }
+
+    public function getPrecioUnitario(): float
+    {
+        return (float) $this->attributes['precio_unitario'];
+    }
+
+    public function setPrecioUnitario(float $precioUnitario): void
+    {
+        $this->attributes['precio_unitario'] = $precioUnitario;
+    }
+
+    public function getSubtotal(): float
+    {
+        return $this->getCantidad() * $this->getPrecioUnitario();
+    }
+
     public function carrito(): BelongsTo
     {
         return $this->belongsTo(CarritoCompras::class, 'carrito_compras_id');
@@ -28,6 +78,6 @@ class ItemCarrito extends Model
 
     public function getSubtotalAttribute(): float
     {
-        return (float) $this->cantidad * (float) $this->precio_unitario;
+        return $this->getSubtotal();
     }
 }

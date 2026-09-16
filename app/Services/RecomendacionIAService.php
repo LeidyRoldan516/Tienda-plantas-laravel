@@ -77,69 +77,95 @@ PROMPT;
         ], JSON_UNESCAPED_UNICODE);
 
         $url = "{$baseUrl}/models/{$modelo}:generateContent";
+        $cuerpo = [
+            'systemInstruction' => [
+                'parts' => [
+                    ['text' => $instrucciones],
+                ],
+            ],
+            'contents' => [
+                [
+                    'role' => 'user',
+                    'parts' => [
+                        ['text' => $contenidoUsuario],
+                    ],
+                ],
+            ],
+            'generationConfig' => [
+                'temperature' => 0.4,
+                'responseMimeType' => 'application/json',
+                'responseSchema' => [
+                    'type' => 'OBJECT',
+                    'properties' => [
+                        'explicacion' => [
+                            'type' => 'STRING',
+                        ],
+                        'plantas' => [
+                            'type' => 'ARRAY',
+                            'items' => [
+                                'type' => 'OBJECT',
+                                'properties' => [
+                                    'id' => ['type' => 'INTEGER'],
+                                    'motivo' => ['type' => 'STRING'],
+                                ],
+                                'required' => ['id', 'motivo'],
+                            ],
+                        ],
+                    ],
+                    'required' => ['explicacion', 'plantas'],
+                ],
+            ],
+        ];
 
-        try {
-            $respuesta = Http::timeout(30)
-                ->withoutVerifying()
-                ->withHeaders([
-                    'x-goog-api-key' => $apiKey,
-                ])
-                ->acceptJson()
-                ->post($url, [
-                    'systemInstruction' => [
-                        'parts' => [
-                            ['text' => $instrucciones],
-                        ],
-                    ],
-                    'contents' => [
-                        [
-                            'role' => 'user',
-                            'parts' => [
-                                ['text' => $contenidoUsuario],
-                            ],
-                        ],
-                    ],
-                    'generationConfig' => [
-                        'temperature' => 0.4,
-                        'responseMimeType' => 'application/json',
-                        'responseSchema' => [
-                            'type' => 'OBJECT',
-                            'properties' => [
-                                'explicacion' => [
-                                    'type' => 'STRING',
-                                ],
-                                'plantas' => [
-                                    'type' => 'ARRAY',
-                                    'items' => [
-                                        'type' => 'OBJECT',
-                                        'properties' => [
-                                            'id' => ['type' => 'INTEGER'],
-                                            'motivo' => ['type' => 'STRING'],
-                                        ],
-                                        'required' => ['id', 'motivo'],
-                                    ],
-                                ],
-                            ],
-                            'required' => ['explicacion', 'plantas'],
-                        ],
-                    ],
+        $maxIntentos = 3;
+        $respuesta = null;
+
+        for ($intento = 1; $intento <= $maxIntentos; $intento++) {
+            try {
+                $respuesta = Http::timeout(30)
+                    ->withoutVerifying()
+                    ->withHeaders([
+                        'x-goog-api-key' => $apiKey,
+                    ])
+                    ->acceptJson()
+                    ->post($url, $cuerpo);
+            } catch (Throwable $excepcion) {
+                Log::warning('Fallo de conexión con Gemini para recomendaciones.', [
+                    'mensaje' => $excepcion->getMessage(),
+                    'intento' => $intento,
                 ]);
-        } catch (Throwable $excepcion) {
-            Log::warning('Fallo de conexión con Gemini para recomendaciones.', [
-                'mensaje' => $excepcion->getMessage(),
-            ]);
 
-            throw new RecomendacionIAException(
-                __('messages.recomendaciones_error_servicio')
-            );
-        }
+                if ($intento === $maxIntentos) {
+                    throw new RecomendacionIAException(
+                        __('messages.recomendaciones_error_servicio')
+                    );
+                }
+                
+                sleep($intento);
+                continue;
+            }
 
-        if (! $respuesta->successful()) {
+            if ($respuesta->successful()) {
+                break;
+            }
+
             Log::warning('Gemini respondió con error al generar recomendaciones.', [
                 'status' => $respuesta->status(),
                 'cuerpo' => $respuesta->body(),
+                'intento' => $intento,
             ]);
 
+            $reintentable = in_array($respuesta->status(), [429, 500, 502, 503], true);
+
+            if (! $reintentable || $intento === $maxIntentos) {
+                throw new RecomendacionIAException(
+                    __('messages.recomendaciones_error_servicio')
+                );
+            }
+
+        }
+
+        if ($respuesta === null || ! $respuesta->successful()) {
             throw new RecomendacionIAException(
                 __('messages.recomendaciones_error_servicio')
             );

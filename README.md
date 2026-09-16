@@ -225,13 +225,13 @@ Flujo del cliente autenticado:
 
 Componentes principales:
 
-| Pieza | Ubicación |
-|---|---|
-| Controlador | `app/Http/Controllers/RecomendacionController.php` |
-| Servicio Gemini | `app/Services/RecomendacionIAService.php` |
-| Preferencias | `app/Models/PerfilPreferencias.php` |
-| Recomendación | `app/Models/Recomendacion.php` |
-| Vistas | `resources/views/recomendaciones/` |
+| Pieza           | Ubicación                                          |
+| --------------- | -------------------------------------------------- |
+| Controlador     | `app/Http/Controllers/RecomendacionController.php` |
+| Servicio Gemini | `app/Services/RecomendacionIAService.php`          |
+| Preferencias    | `app/Models/PerfilPreferencias.php`                |
+| Recomendación   | `app/Models/Recomendacion.php`                     |
+| Vistas          | `resources/views/recomendaciones/`                 |
 
 La IA solo puede recomendar plantas existentes en el inventario. Si Gemini no responde o la respuesta es inválida, se muestra un mensaje al cliente y la tienda sigue operativa.
 
@@ -246,22 +246,22 @@ La autenticación usa **Laravel Breeze** (Blade). Existen dos roles: `cliente` y
 
 ### Credenciales de prueba (seeder)
 
-| Rol | Correo | Contraseña |
-|---|---|---|
-| Administrador | `admin@tienda.com` | `password` |
-| Cliente | `cliente@tienda.com` | `password` |
+| Rol           | Correo               | Contraseña |
+| ------------- | -------------------- | ---------- |
+| Administrador | `admin@tienda.com`   | `password` |
+| Cliente       | `cliente@tienda.com` | `password` |
 
 Estas credenciales son solo para desarrollo local.
 
 ### Rutas de autenticación
 
-| Acción | Ruta | Protección |
-|---|---|---|
-| Login | `/login` | guest |
-| Registro | `/register` | guest |
-| Logout | `POST /logout` | auth |
-| Dashboard cliente | `/dashboard` | auth |
-| Panel admin | `/admin` | auth + admin |
+| Acción            | Ruta           | Protección   |
+| ----------------- | -------------- | ------------ |
+| Login             | `/login`       | guest        |
+| Registro          | `/register`    | guest        |
+| Logout            | `POST /logout` | auth         |
+| Dashboard cliente | `/dashboard`   | auth         |
+| Panel admin       | `/admin`       | auth + admin |
 
 Tras el login, el administrador va a `/admin` y el cliente a `/dashboard`. Un cliente que intente entrar a `/admin` recibe `403`.
 
@@ -297,20 +297,20 @@ Las dos terminales deben permanecer abiertas durante el desarrollo.
 
 ## Rutas principales
 
-| Sección | Ruta | Protección |
-|---|---|---|
-| Página principal | `/` | pública |
-| Inicio de sesión | `/login` | guest |
-| Registro | `/register` | guest |
-| Dashboard cliente | `/dashboard` | auth |
-| Catálogo | `/catalogo` | pública |
-| Carrito | `/carrito` | auth |
-| Pedidos | `/pedidos` | auth |
-| Recomendaciones | `/recomendaciones` | auth |
-| Guardar preferencias | `POST /recomendaciones/preferencias` | auth |
-| Generar recomendación | `POST /recomendaciones/generar` | auth |
-| Detalle de recomendación | `/recomendaciones/{recomendacion}` | auth |
-| Panel administrativo | `/admin` | auth + admin |
+| Sección                  | Ruta                                 | Protección   |
+| ------------------------ | ------------------------------------ | ------------ |
+| Página principal         | `/`                                  | pública      |
+| Inicio de sesión         | `/login`                             | guest        |
+| Registro                 | `/register`                          | guest        |
+| Dashboard cliente        | `/dashboard`                         | auth         |
+| Catálogo                 | `/catalogo`                          | pública      |
+| Carrito                  | `/carrito`                           | auth         |
+| Pedidos                  | `/pedidos`                           | auth         |
+| Recomendaciones          | `/recomendaciones`                   | auth         |
+| Guardar preferencias     | `POST /recomendaciones/preferencias` | auth         |
+| Generar recomendación    | `POST /recomendaciones/generar`      | auth         |
+| Detalle de recomendación | `/recomendaciones/{recomendacion}`   | auth         |
+| Panel administrativo     | `/admin`                             | auth + admin |
 
 ## Datos ficticios
 
