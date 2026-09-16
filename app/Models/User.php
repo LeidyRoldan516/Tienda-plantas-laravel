@@ -9,6 +9,8 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -116,5 +118,15 @@ class User extends Authenticatable
         return $this->isAdministrador()
             ? route('admin.dashboard', absolute: false)
             : route('cliente.dashboard', absolute: false);
+    }
+
+    public function perfilPreferencias(): HasOne
+    {
+        return $this->hasOne(PerfilPreferencias::class, 'usuario_id');
+    }
+
+    public function recomendaciones(): HasMany
+    {
+        return $this->hasMany(Recomendacion::class, 'usuario_id');
     }
 }

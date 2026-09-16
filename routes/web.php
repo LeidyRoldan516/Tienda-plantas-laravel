@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Autor: Simon Martinez Gomez
+ */
+
 use App\Http\Controllers\Admin\CategoriaController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\PlantaController;
@@ -9,6 +13,7 @@ use App\Http\Controllers\Cliente\DashboardController as ClienteDashboardControll
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RecomendacionController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -46,6 +51,15 @@ Route::middleware('auth')->group(function () {
         ->name('pedidos.show');
     Route::patch('/pedidos/{pedido}/cancelar', [PedidoController::class, 'cancelar'])
         ->name('pedidos.cancelar');
+
+    Route::get('/recomendaciones', [RecomendacionController::class, 'index'])
+        ->name('recomendaciones.index');
+    Route::post('/recomendaciones/preferencias', [RecomendacionController::class, 'guardarPreferencias'])
+        ->name('recomendaciones.preferencias');
+    Route::post('/recomendaciones/generar', [RecomendacionController::class, 'generar'])
+        ->name('recomendaciones.generar');
+    Route::get('/recomendaciones/{recomendacion}', [RecomendacionController::class, 'show'])
+        ->name('recomendaciones.show');
 });
 Route::middleware(['auth', 'admin'])
     ->prefix('admin')
@@ -58,4 +72,4 @@ Route::middleware(['auth', 'admin'])
         Route::resource('plantas', PlantaController::class);
     });
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';

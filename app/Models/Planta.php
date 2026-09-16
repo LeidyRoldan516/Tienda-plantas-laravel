@@ -1,9 +1,14 @@
 <?php
 
+/**
+ * Autor: Simon Martinez Gomez
+ */
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Planta extends Model
@@ -30,5 +35,11 @@ class Planta extends Model
     public function itemsPedido(): HasMany
     {
         return $this->hasMany(ItemPedido::class);
+    }
+
+    public function recomendaciones(): BelongsToMany
+    {
+        return $this->belongsToMany(Recomendacion::class, 'planta_recomendacion')
+            ->withPivot(['motivo', 'orden']);
     }
 }

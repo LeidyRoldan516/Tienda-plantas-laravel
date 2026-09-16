@@ -9,10 +9,14 @@
             <p class="mt-2 text-marca-700/70">{{ __('messages.dashboard_cliente_descripcion') }}</p>
         </div>
 
-        <div class="grid gap-4 sm:grid-cols-3">
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <a href="{{ route('catalogo.index') }}" class="rounded-3xl border border-marca-100 bg-white p-6 transition hover:border-marca-300">
                 <h2 class="font-semibold text-marca-900">Catálogo</h2>
                 <p class="mt-1 text-sm text-marca-700/70">Explorar plantas disponibles</p>
+            </a>
+            <a href="{{ route('recomendaciones.index') }}" class="rounded-3xl border border-marca-100 bg-white p-6 transition hover:border-marca-300">
+                <h2 class="font-semibold text-marca-900">{{ __('messages.recomendaciones') }}</h2>
+                <p class="mt-1 text-sm text-marca-700/70">{{ __('messages.recomendaciones_descripcion') }}</p>
             </a>
             <a href="{{ route('carrito.index') }}" class="rounded-3xl border border-marca-100 bg-white p-6 transition hover:border-marca-300">
                 <h2 class="font-semibold text-marca-900">Carrito</h2>

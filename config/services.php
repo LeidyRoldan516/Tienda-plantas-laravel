@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Autor: Simon Martinez Gomez
+ */
+
 return [
 
     /*
@@ -33,6 +37,16 @@ return [
             'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
+    ],
+
+    /*
+    | Credenciales de Gemini para recomendaciones personalizadas.
+    | Definir únicamente en el archivo .env local (nunca en el repositorio).
+    */
+    'gemini' => [
+        'key' => env('GEMINI_API_KEY'),
+        'base_url' => env('GEMINI_BASE_URL', 'https://generativelanguage.googleapis.com/v1beta'),
+        'model' => env('GEMINI_MODEL', 'gemini-3.6-flash'),
     ],
 
 ];
