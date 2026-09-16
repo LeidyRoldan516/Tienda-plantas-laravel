@@ -1,3 +1,4 @@
+{{-- Autor: Simon Martinez Gomez --}}
 @php
 $enlaces = [
     ['ruta' => 'home', 'texto' => 'Inicio', 'activo' => request()->routeIs('home')],
@@ -5,6 +6,7 @@ $enlaces = [
 ];
 
 if (auth()->check()) {
+    $enlaces[] = ['ruta' => 'recomendaciones.index', 'texto' => __('messages.recomendaciones'), 'activo' => request()->routeIs('recomendaciones.*')];
     $enlaces[] = ['ruta' => 'pedidos.index', 'texto' => 'Mis pedidos', 'activo' => request()->routeIs('pedidos.*')];
 }
 @endphp

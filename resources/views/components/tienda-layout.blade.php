@@ -1,3 +1,4 @@
+{{-- Autor: Simon Martinez Gomez --}}
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
@@ -26,6 +27,14 @@
             <div class="contenedor pt-4">
                 <div class="rounded-2xl border border-marca-200 bg-marca-50 px-4 py-3 text-sm text-marca-800">
                     {{ session('mensaje') ?? session('status') ?? session('success') }}
+                </div>
+            </div>
+        @endif
+
+        @if (session('error'))
+            <div class="contenedor pt-4">
+                <div class="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+                    {{ session('error') }}
                 </div>
             </div>
         @endif
