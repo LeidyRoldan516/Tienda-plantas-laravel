@@ -9,8 +9,15 @@ namespace App\Services;
 use App\Exceptions\RecomendacionIAException;
 use App\Models\PerfilPreferencias;
 use App\Models\Planta;
+use Gemini\Data\Content;
+use Gemini\Data\GenerationConfig;
+use Gemini\Data\Schema;
+use Gemini\Enums\DataType;
+use Gemini\Enums\ResponseMimeType;
+use Gemini\Exceptions\ErrorException;
+use Gemini\Laravel\Facades\Gemini;
+use Gemini\Responses\GenerativeModel\GenerateContentResponse;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
@@ -33,8 +40,7 @@ class RecomendacionIAService
             );
         }
 
-        $apiKey = config('services.gemini.key');
-        $baseUrl = rtrim((string) config('services.gemini.base_url'), '/');
+        $apiKey = config('gemini.api_key') ?: config('services.gemini.key');
         $modelo = (string) config('services.gemini.model');
 
         if (blank($apiKey)) {
@@ -76,110 +82,29 @@ PROMPT;
             'catalogo' => $catalogo,
         ], JSON_UNESCAPED_UNICODE);
 
-        $url = "{$baseUrl}/models/{$modelo}:generateContent";
-        $cuerpo = [
-            'systemInstruction' => [
-                'parts' => [
-                    ['text' => $instrucciones],
-                ],
-            ],
-            'contents' => [
-                [
-                    'role' => 'user',
-                    'parts' => [
-                        ['text' => $contenidoUsuario],
-                    ],
-                ],
-            ],
-            'generationConfig' => [
-                'temperature' => 0.4,
-                'responseMimeType' => 'application/json',
-                'responseSchema' => [
-                    'type' => 'OBJECT',
-                    'properties' => [
-                        'explicacion' => [
-                            'type' => 'STRING',
-                        ],
-                        'plantas' => [
-                            'type' => 'ARRAY',
-                            'items' => [
-                                'type' => 'OBJECT',
-                                'properties' => [
-                                    'id' => ['type' => 'INTEGER'],
-                                    'motivo' => ['type' => 'STRING'],
-                                ],
-                                'required' => ['id', 'motivo'],
-                            ],
-                        ],
-                    ],
-                    'required' => ['explicacion', 'plantas'],
-                ],
-            ],
-        ];
-
-        $maxIntentos = 3;
-        $respuesta = null;
-
-        for ($intento = 1; $intento <= $maxIntentos; $intento++) {
-            try {
-                $respuesta = Http::timeout(30)
-                    ->withoutVerifying()
-                    ->withHeaders([
-                        'x-goog-api-key' => $apiKey,
-                    ])
-                    ->acceptJson()
-                    ->post($url, $cuerpo);
-            } catch (Throwable $excepcion) {
-                Log::warning('Fallo de conexión con Gemini para recomendaciones.', [
-                    'mensaje' => $excepcion->getMessage(),
-                    'intento' => $intento,
-                ]);
-
-                if ($intento === $maxIntentos) {
-                    throw new RecomendacionIAException(
-                        __('messages.recomendaciones_error_servicio')
-                    );
-                }
-                
-                sleep($intento);
-                continue;
-            }
-
-            if ($respuesta->successful()) {
-                break;
-            }
-
-            Log::warning('Gemini respondió con error al generar recomendaciones.', [
-                'status' => $respuesta->status(),
-                'cuerpo' => $respuesta->body(),
-                'intento' => $intento,
+        try {
+            $respuesta = $this->solicitarAGemini($modelo, $instrucciones, $contenidoUsuario);
+        } catch (Throwable $excepcion) {
+            Log::warning('Fallo al consultar Gemini para recomendaciones.', [
+                'mensaje' => $excepcion->getMessage(),
             ]);
 
-            $reintentable = in_array($respuesta->status(), [429, 500, 502, 503], true);
-
-            if (! $reintentable || $intento === $maxIntentos) {
-                throw new RecomendacionIAException(
-                    __('messages.recomendaciones_error_servicio')
-                );
-            }
-
-        }
-
-        if ($respuesta === null || ! $respuesta->successful()) {
             throw new RecomendacionIAException(
                 __('messages.recomendaciones_error_servicio')
             );
         }
 
-        $contenido = data_get($respuesta->json(), 'candidates.0.content.parts.0.text');
+        try {
+            $datos = $respuesta->json(associative: true);
+        } catch (Throwable $excepcion) {
+            Log::warning('Gemini devolvió una respuesta sin contenido usable.', [
+                'mensaje' => $excepcion->getMessage(),
+            ]);
 
-        if (! is_string($contenido) || blank($contenido)) {
             throw new RecomendacionIAException(
                 __('messages.recomendaciones_respuesta_invalida')
             );
         }
-
-        $datos = json_decode($contenido, true);
 
         if (! is_array($datos)) {
             throw new RecomendacionIAException(
@@ -188,6 +113,60 @@ PROMPT;
         }
 
         return $this->validarYMapear($datos, $plantasDisponibles);
+    }
+
+    /**
+     * @throws Throwable
+     */
+    private function solicitarAGemini(
+        string $modelo,
+        string $instrucciones,
+        string $contenidoUsuario
+    ): GenerateContentResponse {
+        $configuracion = new GenerationConfig(
+            temperature: 0.4,
+            responseMimeType: ResponseMimeType::APPLICATION_JSON,
+            responseSchema: new Schema(
+                type: DataType::OBJECT,
+                properties: [
+                    'explicacion' => new Schema(type: DataType::STRING),
+                    'plantas' => new Schema(
+                        type: DataType::ARRAY,
+                        items: new Schema(
+                            type: DataType::OBJECT,
+                            properties: [
+                                'id' => new Schema(type: DataType::INTEGER),
+                                'motivo' => new Schema(type: DataType::STRING),
+                            ],
+                            required: ['id', 'motivo'],
+                        ),
+                    ),
+                ],
+                required: ['explicacion', 'plantas'],
+            ),
+        );
+
+        return retry(
+            times: 3,
+            callback: fn () => Gemini::generativeModel(model: $modelo)
+                ->withSystemInstruction(Content::parse($instrucciones))
+                ->withGenerationConfig($configuracion)
+                ->generateContent($contenidoUsuario),
+            sleepMilliseconds: app()->runningUnitTests()
+                ? 0
+                : fn (int $intento) => $intento * 1000,
+            when: function (Throwable $excepcion): bool {
+                Log::warning('Gemini respondió con error al generar recomendaciones.', [
+                    'mensaje' => $excepcion->getMessage(),
+                ]);
+
+                if ($excepcion instanceof ErrorException) {
+                    return in_array($excepcion->getErrorCode(), [429, 500, 502, 503], true);
+                }
+
+                return true;
+            },
+        );
     }
 
     /**

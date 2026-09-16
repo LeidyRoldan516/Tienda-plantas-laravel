@@ -10,8 +10,11 @@ use App\Models\Categoria;
 use App\Models\Planta;
 use App\Models\User;
 use App\Services\RecomendacionIAService;
+use Gemini\Exceptions\ErrorException;
+use Gemini\Laravel\Facades\Gemini;
+use Gemini\Resources\GenerativeModel;
+use Gemini\Responses\GenerativeModel\GenerateContentResponse;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class RecomendacionTest extends TestCase
@@ -72,7 +75,10 @@ class RecomendacionTest extends TestCase
 
     public function test_servicio_sin_credenciales_informa_error(): void
     {
-        config(['services.gemini.key' => null]);
+        config([
+            'gemini.api_key' => null,
+            'services.gemini.key' => null,
+        ]);
         $categoria = Categoria::query()->create(['nombre' => 'Interior']);
         Planta::query()->create([
             'nombre' => 'Monstera',
@@ -129,7 +135,7 @@ class RecomendacionTest extends TestCase
 
     public function test_generar_reintenta_cuando_gemini_esta_saturado(): void
     {
-        config(['services.gemini.key' => 'test-key']);
+        $this->configurarClaveGemini();
 
         $planta = Planta::query()->create([
             'nombre' => 'Monstera',
@@ -140,23 +146,9 @@ class RecomendacionTest extends TestCase
             'categoria_id' => Categoria::query()->create(['nombre' => 'Interior'])->id,
         ]);
 
-        Http::fake([
-            '*' => Http::sequence()
-                ->push(['error' => ['message' => 'high demand']], 503)
-                ->push([
-                    'candidates' => [[
-                        'content' => [
-                            'parts' => [[
-                                'text' => json_encode([
-                                    'explicacion' => 'Estas plantas te convienen.',
-                                    'plantas' => [
-                                        ['id' => $planta->id, 'motivo' => 'Fácil de cuidar'],
-                                    ],
-                                ]),
-                            ]],
-                        ],
-                    ]],
-                ]),
+        Gemini::fake([
+            $this->errorGeminiSaturado(),
+            $this->respuestaExitosaGemini($planta),
         ]);
 
         $cliente = User::factory()->create(['rol' => 'cliente']);
@@ -172,12 +164,12 @@ class RecomendacionTest extends TestCase
 
         $respuesta->assertRedirect();
         $this->assertDatabaseCount('recomendaciones', 1);
-        Http::assertSentCount(2);
+        Gemini::assertSent(GenerativeModel::class, config('services.gemini.model'), 2);
     }
 
     public function test_generar_falla_si_todos_los_intentos_devuelven_error(): void
     {
-        config(['services.gemini.key' => 'test-key']);
+        $this->configurarClaveGemini();
 
         Planta::query()->create([
             'nombre' => 'Monstera',
@@ -188,8 +180,10 @@ class RecomendacionTest extends TestCase
             'categoria_id' => Categoria::query()->create(['nombre' => 'Interior'])->id,
         ]);
 
-        Http::fake([
-            '*' => Http::response(['error' => ['message' => 'high demand']], 503),
+        Gemini::fake([
+            $this->errorGeminiSaturado(),
+            $this->errorGeminiSaturado(),
+            $this->errorGeminiSaturado(),
         ]);
 
         $cliente = User::factory()->create(['rol' => 'cliente']);
@@ -208,6 +202,45 @@ class RecomendacionTest extends TestCase
         $respuesta->assertRedirect(route('recomendaciones.index'));
         $respuesta->assertSessionHas('error', __('messages.recomendaciones_error_servicio'));
         $this->assertDatabaseCount('recomendaciones', 0);
-        Http::assertSentCount(3);
+        Gemini::assertSent(GenerativeModel::class, config('services.gemini.model'), 3);
+    }
+
+    private function configurarClaveGemini(): void
+    {
+        config([
+            'gemini.api_key' => 'test-key',
+            'services.gemini.key' => 'test-key',
+        ]);
+    }
+
+    private function errorGeminiSaturado(): ErrorException
+    {
+        return new ErrorException([
+            'message' => 'high demand',
+            'status' => 'UNAVAILABLE',
+            'code' => 503,
+        ]);
+    }
+
+    private function respuestaExitosaGemini(Planta $planta): GenerateContentResponse
+    {
+        return GenerateContentResponse::fake([
+            'candidates' => [
+                [
+                    'content' => [
+                        'parts' => [
+                            [
+                                'text' => json_encode([
+                                    'explicacion' => 'Estas plantas te convienen.',
+                                    'plantas' => [
+                                        ['id' => $planta->id, 'motivo' => 'Fácil de cuidar'],
+                                    ],
+                                ]),
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ]);
     }
 }

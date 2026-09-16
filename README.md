@@ -201,7 +201,7 @@ Las recomendaciones usan la API de Google Gemini. Cada integrante debe configura
 
 ```env
 GEMINI_API_KEY=
-GEMINI_BASE_URL=https://generativelanguage.googleapis.com/v1beta
+GEMINI_BASE_URL=https://generativelanguage.googleapis.com/v1beta/
 GEMINI_MODEL=gemini-3.6-flash
 ```
 
