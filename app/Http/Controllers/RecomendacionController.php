@@ -10,7 +10,7 @@ use App\Exceptions\RecomendacionIAException;
 use App\Http\Requests\GuardarPreferenciasRequest;
 use App\Models\Planta;
 use App\Models\Recomendacion;
-use App\Services\RecomendacionIAService;
+use App\Interfaces\RecomendacionServiceInterface;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
@@ -44,7 +44,7 @@ class RecomendacionController extends Controller
             ->with('mensaje', __('messages.preferencias_guardadas'));
     }
 
-    public function generar(RecomendacionIAService $servicio): RedirectResponse
+    public function generar(RecomendacionServiceInterface $servicio): RedirectResponse
     {
         $usuario = auth()->user();
         $perfil = $usuario->perfilPreferencias;

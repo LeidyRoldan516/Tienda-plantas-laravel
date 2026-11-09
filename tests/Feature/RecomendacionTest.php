@@ -9,7 +9,9 @@ namespace Tests\Feature;
 use App\Models\Categoria;
 use App\Models\Planta;
 use App\Models\User;
-use App\Services\RecomendacionIAService;
+use App\Interfaces\RecomendacionServiceInterface;
+use App\Services\GeminiRecomendacionService;
+use App\Services\LocalRecomendacionService;
 use Gemini\Exceptions\ErrorException;
 use Gemini\Laravel\Facades\Gemini;
 use Gemini\Resources\GenerativeModel;
@@ -73,12 +75,13 @@ class RecomendacionTest extends TestCase
         $respuesta->assertSessionHas('error');
     }
 
-    public function test_servicio_sin_credenciales_informa_error(): void
+    public function test_sin_credenciales_usa_recomendador_local_de_respaldo(): void
     {
         config([
             'gemini.api_key' => null,
             'services.gemini.key' => null,
         ]);
+        Gemini::fake();
         $categoria = Categoria::query()->create(['nombre' => 'Interior']);
         Planta::query()->create([
             'nombre' => 'Monstera',
@@ -100,15 +103,75 @@ class RecomendacionTest extends TestCase
 
         $respuesta = $this->actingAs($cliente)->post(route('recomendaciones.generar'));
 
-        $respuesta->assertRedirect(route('recomendaciones.index'));
-        $respuesta->assertSessionHas('error', __('messages.recomendaciones_sin_credenciales'));
-        $this->assertDatabaseCount('recomendaciones', 0);
+        $respuesta->assertRedirect();
+        $respuesta->assertSessionHas('mensaje', __('messages.recomendaciones_generadas'));
+        $this->assertDatabaseHas('recomendaciones', [
+            'usuario_id' => $cliente->id,
+            'explicacion' => __('messages.recomendaciones_local_explicacion'),
+        ]);
+        Gemini::assertNothingSent();
+    }
+
+    public function test_contenedor_resuelve_gemini_cuando_hay_credenciales(): void
+    {
+        $this->configurarClaveGemini();
+        config(['services.recomendaciones.driver' => 'gemini']);
+
+        $this->assertInstanceOf(
+            GeminiRecomendacionService::class,
+            app(RecomendacionServiceInterface::class)
+        );
+    }
+
+    public function test_contenedor_resuelve_local_cuando_driver_es_local(): void
+    {
+        $this->configurarClaveGemini();
+        config(['services.recomendaciones.driver' => 'local']);
+
+        $this->assertInstanceOf(
+            LocalRecomendacionService::class,
+            app(RecomendacionServiceInterface::class)
+        );
+    }
+
+    public function test_generar_usa_gemini_como_servicio_externo(): void
+    {
+        $this->configurarClaveGemini();
+        config(['services.recomendaciones.driver' => 'gemini']);
+
+        $planta = Planta::query()->create([
+            'nombre' => 'Monstera',
+            'descripcion' => 'Planta de interior',
+            'precio' => 45000,
+            'stock' => 5,
+            'imagen_url' => null,
+            'categoria_id' => Categoria::query()->create(['nombre' => 'Interior'])->id,
+        ]);
+
+        Gemini::fake([$this->respuestaExitosaGemini($planta)]);
+
+        $cliente = User::factory()->create(['rol' => 'cliente']);
+        $cliente->perfilPreferencias()->create([
+            'experiencia' => 'principiante',
+            'espacio' => 'balcon',
+            'iluminacion' => 'media',
+            'tiempo_cuidado' => 'bajo',
+            'mascotas' => false,
+        ]);
+
+        $this->actingAs($cliente)->post(route('recomendaciones.generar'))->assertRedirect();
+
+        $this->assertDatabaseHas('recomendaciones', [
+            'usuario_id' => $cliente->id,
+            'explicacion' => 'Estas plantas te convienen.',
+        ]);
+        Gemini::assertSent(GenerativeModel::class, config('services.gemini.model'), 1);
     }
 
     public function test_servicio_valida_solo_plantas_existentes(): void
     {
-        $servicio = app(RecomendacionIAService::class);
-        $metodo = new \ReflectionMethod(RecomendacionIAService::class, 'validarYMapear');
+        $servicio = app(GeminiRecomendacionService::class);
+        $metodo = new \ReflectionMethod(GeminiRecomendacionService::class, 'validarYMapear');
         $metodo->setAccessible(true);
 
         $planta = Planta::query()->create([
