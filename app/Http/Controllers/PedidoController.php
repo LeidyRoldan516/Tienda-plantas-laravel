@@ -39,7 +39,7 @@ class PedidoController extends Controller
 
             if (! $carrito || $carrito->items->isEmpty()) {
                 throw ValidationException::withMessages([
-                    'carrito' => 'No puedes confirmar un carrito vacío.',
+                    'carrito' => __('messages.carrito_confirmar_vacio'),
                 ]);
             }
 
@@ -53,7 +53,7 @@ class PedidoController extends Controller
 
                 if (! $planta || $planta->stock < $item->cantidad) {
                     throw ValidationException::withMessages([
-                        'stock' => 'Una planta del carrito ya no tiene suficiente disponibilidad.',
+                        'stock' => __('messages.pedido_stock_insuficiente'),
                     ]);
                 }
 
@@ -92,7 +92,7 @@ class PedidoController extends Controller
         });
 
         return redirect()->route('pedidos.show', $pedido)
-            ->with('mensaje', 'Pedido creado correctamente.');
+            ->with('mensaje', __('messages.pedido_creado'));
     }
 
     public function cancelar(Pedido $pedido): RedirectResponse
@@ -101,13 +101,13 @@ class PedidoController extends Controller
 
         if ($pedido->estado !== 'pendiente') {
             throw ValidationException::withMessages([
-                'pedido' => 'Solo puedes cancelar pedidos pendientes.',
+                'pedido' => __('messages.pedido_cancelar_invalido'),
             ]);
         }
 
         $pedido->update(['estado' => 'cancelado']);
 
         return redirect()->route('pedidos.show', $pedido)
-            ->with('mensaje', 'Pedido cancelado.');
+            ->with('mensaje', __('messages.pedido_cancelado'));
     }
 }

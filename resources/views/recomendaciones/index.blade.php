@@ -1,6 +1,6 @@
 {{-- Autor: Simon Martinez Gomez --}}
 <x-tienda-layout>
-    <x-slot name="title">{{ __('messages.recomendaciones') }} · El Rincón de las Plantas</x-slot>
+    <x-slot name="title">{{ __('messages.recomendaciones') }} · {{ __('messages.marca_nombre') }}</x-slot>
 
     <div class="contenedor py-12">
         <div class="mb-10 max-w-2xl">

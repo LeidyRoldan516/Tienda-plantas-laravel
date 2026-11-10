@@ -52,7 +52,10 @@ class ProfileController extends Controller
 
         $user->delete();
 
+        $locale = app()->getLocale();
+
         $request->session()->invalidate();
+        $request->session()->put('locale', $locale);
         $request->session()->regenerateToken();
 
         return Redirect::to('/');

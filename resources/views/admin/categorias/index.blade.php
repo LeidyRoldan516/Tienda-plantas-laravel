@@ -1,30 +1,30 @@
 {{-- Autor: Simon Martinez Gomez --}}
 @extends('layouts.admin')
 
-@section('title', 'Categorías')
+@section('title', __('messages.categorias'))
 
 @section('content')
 <div class="admin-cabecera">
     <div>
-        <p class="admin-eyebrow">Organización</p>
-        <h1>Categorías</h1>
-        <p>Agrupa las plantas del catálogo por tipo.</p>
+        <p class="admin-eyebrow">{{ __('messages.organizacion') }}</p>
+        <h1>{{ __('messages.categorias') }}</h1>
+        <p>{{ __('messages.categorias_ayuda') }}</p>
     </div>
-    <a href="{{ route('admin.categorias.create') }}" class="admin-btn">Nueva categoría</a>
+    <a href="{{ route('admin.categorias.create') }}" class="admin-btn">{{ __('messages.nueva_categoria') }}</a>
 </div>
 
 <section class="admin-panel">
     @if ($categorias->isEmpty())
         <div class="admin-vacio">
-            <p>No hay categorías todavía.</p>
-            <a href="{{ route('admin.categorias.create') }}" class="admin-btn" style="margin-top: 1rem;">Crear categoría</a>
+            <p>{{ __('messages.sin_categorias') }}</p>
+            <a href="{{ route('admin.categorias.create') }}" class="admin-btn" style="margin-top: 1rem;">{{ __('messages.crear_categoria') }}</a>
         </div>
     @else
         <div class="admin-tabla-wrap">
             <table class="admin-tabla">
                 <thead>
                     <tr>
-                        <th>Nombre</th>
+                        <th>{{ __('messages.nombre') }}</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -33,13 +33,13 @@
                         <tr>
                             <td><strong>{{ $categoria->nombre }}</strong></td>
                             <td class="admin-acciones">
-                                <a href="{{ route('admin.categorias.show', $categoria) }}" class="admin-enlace">Ver</a>
-                                <a href="{{ route('admin.categorias.edit', $categoria) }}" class="admin-enlace">Editar</a>
+                                <a href="{{ route('admin.categorias.show', $categoria) }}" class="admin-enlace">{{ __('messages.ver') }}</a>
+                                <a href="{{ route('admin.categorias.edit', $categoria) }}" class="admin-enlace">{{ __('messages.editar') }}</a>
                                 <form method="POST" action="{{ route('admin.categorias.destroy', $categoria) }}"
-                                    onsubmit="return confirm('¿Eliminar la categoría {{ $categoria->nombre }}?')">
+                                    onsubmit="return confirm({{ Illuminate\Support\Js::from(__('messages.confirmar_eliminar_categoria', ['nombre' => $categoria->nombre])) }})">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="admin-btn-peligro">Eliminar</button>
+                                    <button type="submit" class="admin-btn-peligro">{{ __('messages.eliminar') }}</button>
                                 </form>
                             </td>
                         </tr>

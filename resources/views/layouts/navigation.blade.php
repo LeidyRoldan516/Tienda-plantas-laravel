@@ -1,6 +1,7 @@
 {{-- Autor: Simon Martinez Gomez --}}
 {{-- Autor: Simon Martinez Gomez --}}
 <nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
+    @include('partials.language-selector')
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
@@ -15,7 +16,7 @@
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('cliente.dashboard')" :active="request()->routeIs('cliente.dashboard')">
-                        {{ __('Dashboard') }}
+                        {{ __('messages.dashboard') }}
                     </x-nav-link>
                 </div>
             </div>
@@ -37,7 +38,7 @@
 
                     <x-slot name="content">
                         <x-dropdown-link :href="route('profile.edit')">
-                            {{ __('Profile') }}
+                            {{ __('messages.perfil') }}
                         </x-dropdown-link>
 
                         <!-- Authentication -->
@@ -47,7 +48,7 @@
                             <x-dropdown-link :href="route('logout')"
                                     onclick="event.preventDefault();
                                                 this.closest('form').submit();">
-                                {{ __('Log Out') }}
+                                {{ __('messages.cerrar_sesion') }}
                             </x-dropdown-link>
                         </form>
                     </x-slot>
@@ -70,7 +71,7 @@
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('cliente.dashboard')" :active="request()->routeIs('cliente.dashboard')">
-                {{ __('Dashboard') }}
+                {{ __('messages.dashboard') }}
             </x-responsive-nav-link>
         </div>
 
@@ -83,7 +84,7 @@
 
             <div class="mt-3 space-y-1">
                 <x-responsive-nav-link :href="route('profile.edit')">
-                    {{ __('Profile') }}
+                    {{ __('messages.perfil') }}
                 </x-responsive-nav-link>
 
                 <!-- Authentication -->
@@ -93,7 +94,7 @@
                     <x-responsive-nav-link :href="route('logout')"
                             onclick="event.preventDefault();
                                         this.closest('form').submit();">
-                        {{ __('Log Out') }}
+                        {{ __('messages.cerrar_sesion') }}
                     </x-responsive-nav-link>
                 </form>
             </div>

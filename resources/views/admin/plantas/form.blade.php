@@ -1,14 +1,14 @@
 {{-- Autor: Simon Martinez Gomez --}}
 <div class="admin-form-grid">
     <label class="admin-campo">
-        <span>Nombre</span>
+        <span>{{ __('messages.nombre') }}</span>
         <input type="text" name="nombre" required value="{{ old('nombre', $planta->nombre ?? '') }}">
     </label>
 
     <label class="admin-campo">
-        <span>Categoría</span>
+        <span>{{ __('messages.categoria') }}</span>
         <select name="categoria_id" required>
-            <option value="">Selecciona una categoría</option>
+            <option value="">{{ __('messages.selecciona_categoria') }}</option>
             @foreach ($categorias as $categoria)
                 <option value="{{ $categoria->id }}"
                     @selected(old('categoria_id', $planta->categoria_id ?? '') == $categoria->id)>
@@ -19,29 +19,29 @@
     </label>
 
     <label class="admin-campo">
-        <span>Precio (pesos)</span>
+        <span>{{ __('messages.precio_pesos') }}</span>
         <input type="number" name="precio" min="0" step="1" required
             value="{{ old('precio', $planta->precio ?? '') }}">
     </label>
 
     <label class="admin-campo">
-        <span>Unidades disponibles</span>
+        <span>{{ __('messages.unidades_disponibles') }}</span>
         <input type="number" name="stock" min="0" step="1" required
             value="{{ old('stock', $planta->stock ?? 0) }}">
     </label>
 
     <label class="admin-campo admin-campo-completo">
-        <span>Descripción</span>
+        <span>{{ __('messages.descripcion') }}</span>
         <textarea name="descripcion" rows="3" required>{{ old('descripcion', $planta->descripcion ?? '') }}</textarea>
     </label>
 
     <label class="admin-campo admin-campo-completo">
-        <span>URL de imagen (opcional)</span>
+        <span>{{ __('messages.imagen_url') }}</span>
         <input type="url" name="imagen_url" placeholder="https://..."
             value="{{ old('imagen_url', $planta->imagen_url ?? '') }}">
     </label>
 </div>
 
 <div class="admin-acciones-bar">
-    <button type="submit" class="admin-btn">Guardar planta</button>
+    <button type="submit" class="admin-btn">{{ __('messages.guardar_planta') }}</button>
 </div>

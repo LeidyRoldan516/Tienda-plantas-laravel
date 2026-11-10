@@ -1,16 +1,16 @@
 <x-tienda-layout>
-    <x-slot name="title">Mi carrito · El Rincón de las Plantas</x-slot>
+    <x-slot name="title">{{ __('messages.mi_carrito') }} · {{ __('messages.marca_nombre') }}</x-slot>
 
     <div class="contenedor py-12">
         <div class="mb-10">
-            <p class="text-sm font-semibold uppercase tracking-[0.2em] text-marca-300">Compra</p>
-            <h1 class="mt-2 text-3xl font-semibold text-marca-900">Mi carrito</h1>
+            <p class="text-sm font-semibold uppercase tracking-[0.2em] text-marca-300">{{ __('messages.compra') }}</p>
+            <h1 class="mt-2 text-3xl font-semibold text-marca-900">{{ __('messages.mi_carrito') }}</h1>
         </div>
 
         @if ($carrito->items->isEmpty())
             <div class="rounded-3xl border border-dashed border-marca-200 bg-white px-6 py-16 text-center">
-                <p class="text-marca-700/70">Tu carrito está vacío.</p>
-                <a href="{{ route('catalogo.index') }}" class="btn-primario mt-6">Ver catálogo</a>
+                <p class="text-marca-700/70">{{ __('messages.carrito_vacio') }}</p>
+                <a href="{{ route('catalogo.index') }}" class="btn-primario mt-6">{{ __('messages.ver_catalogo') }}</a>
             </div>
         @else
             <div class="overflow-hidden rounded-3xl border border-marca-100 bg-white">
@@ -18,10 +18,10 @@
                     <table class="min-w-full text-left text-sm">
                         <thead class="border-b border-marca-100 bg-marca-50/60 text-marca-700">
                             <tr>
-                                <th class="px-5 py-4 font-medium">Planta</th>
-                                <th class="px-5 py-4 font-medium">Precio</th>
-                                <th class="px-5 py-4 font-medium">Cantidad</th>
-                                <th class="px-5 py-4 font-medium">Subtotal</th>
+                                <th class="px-5 py-4 font-medium">{{ __('messages.planta') }}</th>
+                                <th class="px-5 py-4 font-medium">{{ __('messages.precio') }}</th>
+                                <th class="px-5 py-4 font-medium">{{ __('messages.cantidad') }}</th>
+                                <th class="px-5 py-4 font-medium">{{ __('messages.subtotal') }}</th>
                                 <th class="px-5 py-4 font-medium"></th>
                             </tr>
                         </thead>
@@ -40,7 +40,7 @@
                                                 min="1" max="{{ $item->planta->stock }}"
                                                 value="{{ $item->cantidad }}" class="campo w-20">
                                             <button type="submit" class="text-sm font-medium text-marca-500 hover:text-marca-700">
-                                                Actualizar
+                                                {{ __('messages.actualizar') }}
                                             </button>
                                         </form>
                                     </td>
@@ -52,7 +52,7 @@
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="text-sm font-medium text-rose-600 hover:text-rose-700">
-                                                Retirar
+                                                {{ __('messages.retirar') }}
                                             </button>
                                         </form>
                                     </td>
@@ -65,13 +65,13 @@
 
             <div class="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <p class="text-xl font-semibold text-marca-900">
-                    Total: $ {{ number_format($total, 0, ',', '.') }}
+                    {{ __('messages.total') }}: $ {{ number_format($total, 0, ',', '.') }}
                 </p>
                 <div class="flex flex-wrap gap-3">
-                    <a href="{{ route('catalogo.index') }}" class="btn-secundario">Seguir comprando</a>
+                    <a href="{{ route('catalogo.index') }}" class="btn-secundario">{{ __('messages.seguir_comprando') }}</a>
                     <form action="{{ route('pedidos.crear') }}" method="POST">
                         @csrf
-                        <button type="submit" class="btn-primario">Confirmar pedido</button>
+                        <button type="submit" class="btn-primario">{{ __('messages.confirmar_pedido') }}</button>
                     </form>
                 </div>
             </div>

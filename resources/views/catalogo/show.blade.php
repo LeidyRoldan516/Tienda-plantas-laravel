@@ -1,9 +1,9 @@
 <x-tienda-layout>
-    <x-slot name="title">{{ $planta->nombre }} · El Rincón de las Plantas</x-slot>
+    <x-slot name="title">{{ $planta->nombre }} · {{ __('messages.marca_nombre') }}</x-slot>
 
     <div class="contenedor py-12">
         <a href="{{ route('catalogo.index') }}" class="nav-enlace inline-flex items-center gap-2">
-            ← Volver al catálogo
+            ← {{ __('messages.volver_catalogo') }}
         </a>
 
         <div class="mt-8 grid gap-10 lg:grid-cols-2 lg:items-start">
@@ -20,7 +20,7 @@
 
             <div>
                 <p class="text-sm font-semibold uppercase tracking-[0.2em] text-marca-300">
-                    {{ $planta->categoria?->nombre ?? 'Sin categoría' }}
+                    {{ $planta->categoria?->nombre ?? __('messages.sin_categoria') }}
                 </p>
                 <h1 class="mt-2 text-3xl font-semibold text-marca-900 sm:text-4xl">{{ $planta->nombre }}</h1>
                 <p class="mt-4 text-2xl font-semibold text-marca-500">
@@ -28,7 +28,7 @@
                 </p>
                 <p class="mt-6 leading-relaxed text-marca-700/80">{{ $planta->descripcion }}</p>
                 <p class="mt-4 text-sm text-marca-700/70">
-                    Disponibles: <span class="font-semibold text-marca-900">{{ $planta->stock }}</span>
+                    {{ __('messages.disponibles') }}: <span class="font-semibold text-marca-900">{{ $planta->stock }}</span>
                 </p>
 
                 <div class="mt-8">
@@ -38,21 +38,21 @@
                                 @csrf
                                 <input type="hidden" name="planta_id" value="{{ $planta->id }}">
                                 <div>
-                                    <label for="cantidad" class="mb-1 block text-sm font-medium text-marca-800">Cantidad</label>
+                                    <label for="cantidad" class="mb-1 block text-sm font-medium text-marca-800">{{ __('messages.cantidad') }}</label>
                                     <input id="cantidad" type="number" name="cantidad"
                                         min="1" max="{{ $planta->stock }}" value="1" required
                                         class="campo w-28">
                                 </div>
-                                <button type="submit" class="btn-primario">Agregar al carrito</button>
+                                <button type="submit" class="btn-primario">{{ __('messages.agregar_carrito') }}</button>
                             </form>
-                            <a href="{{ route('carrito.index') }}" class="nav-enlace mt-4 inline-block">Ver mi carrito</a>
+                            <a href="{{ route('carrito.index') }}" class="nav-enlace mt-4 inline-block">{{ __('messages.ver_carrito') }}</a>
                         @else
-                            <p class="mb-4 text-sm text-marca-700/80">Inicia sesión para agregar esta planta al carrito.</p>
-                            <a href="{{ route('login') }}" class="btn-primario">Iniciar sesión</a>
+                            <p class="mb-4 text-sm text-marca-700/80">{{ __('messages.login_para_comprar') }}</p>
+                            <a href="{{ route('login') }}" class="btn-primario">{{ __('messages.iniciar_sesion') }}</a>
                         @endauth
                     @else
                         <p class="rounded-2xl bg-marca-50 px-4 py-3 text-sm text-marca-700">
-                            Esta planta no está disponible por ahora.
+                            {{ __('messages.planta_agotada') }}
                         </p>
                     @endif
                 </div>

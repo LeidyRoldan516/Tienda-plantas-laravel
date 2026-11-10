@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'El Rincón de las Plantas') }}</title>
+    <title>{{ __('messages.marca_nombre') }}</title>
 
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=outfit:300,400,500,600,700&display=swap" rel="stylesheet" />
@@ -16,6 +16,7 @@
 
 <body class="font-sans text-marca-900 antialiased">
     <div class="flex min-h-screen flex-col items-center bg-lienzo pt-8 sm:justify-center sm:pt-0">
+        @include('partials.language-selector')
         <div class="mb-2">
             <a href="{{ route('home') }}">
                 <x-application-logo class="h-20 w-auto" />
