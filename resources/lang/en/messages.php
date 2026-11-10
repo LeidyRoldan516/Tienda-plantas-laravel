@@ -49,6 +49,11 @@ return [
     'recomendaciones_respuesta_invalida' => 'The service response could not be interpreted. Please try again.',
     'recomendaciones_sin_coincidencias' => 'We could not find valid matches in the catalog. Review your preferences and try again.',
     'recomendaciones_motivo_default' => 'It matches the profile you provided.',
+    'recomendaciones_local_explicacion' => 'We picked these plants from the catalog based on your space, the available light and the time you can dedicate to them.',
+    'recomendaciones_local_motivo_espacio' => 'It adapts well to the space you described.',
+    'recomendaciones_local_motivo_luz' => 'Its light needs match your lighting.',
+    'recomendaciones_local_motivo_cuidado' => 'It is easy to care for and needs little maintenance.',
+    'recomendaciones_local_motivo_dedicacion' => 'It makes the most of the extra time you can dedicate to it.',
 
     'preferencias_titulo' => 'Your preference profile',
     'preferencias_ayuda' => 'Complete this information before requesting a recommendation.',
