@@ -26,4 +26,7 @@ COPY . .
 COPY --from=vendor /app/vendor ./vendor
 COPY --from=assets /app/public/build ./public/build
 RUN php artisan package:discover --ansi
-CMD sh -c "php artisan storage:link || true; php artisan migrate --force; php artisan db:seed --class=PlantasSeeder --force; php artisan serve --host=0.0.0.0 --port=${PORT:-8080}"
+# Puerto HTTP por defecto (se puede cambiar con -e PORT=...)
+ENV PORT=80
+EXPOSE 80
+CMD ["sh", "-c", "php artisan storage:link || true; php artisan migrate --force; php artisan db:seed --class=PlantasSeeder --force; php artisan serve --host=0.0.0.0 --port=${PORT}"]

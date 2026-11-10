@@ -42,7 +42,8 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->useLangPath(resource_path('lang'));
 
-        if (config('app.env') === 'production') {
+        // Solo forzar https si la app realmente se sirve por https (en la VM se usa http en el puerto 80)
+        if (str_starts_with((string) config('app.url'), 'https://')) {
             URL::forceScheme('https');
         }
     }

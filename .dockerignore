@@ -26,3 +26,5 @@ docker.sh
 Dockerfile
 docker-compose.yml
 .dockerignore
+docker-compose.prod.yml
+actualizar-vm.sh
