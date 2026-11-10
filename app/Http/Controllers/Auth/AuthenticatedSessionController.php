@@ -44,7 +44,10 @@ class AuthenticatedSessionController extends Controller
     {
         Auth::guard('web')->logout();
 
+        $locale = app()->getLocale();
+
         $request->session()->invalidate();
+        $request->session()->put('locale', $locale);
 
         $request->session()->regenerateToken();
 

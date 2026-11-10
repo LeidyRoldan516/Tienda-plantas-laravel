@@ -1,13 +1,13 @@
 {{-- Autor: Simon Martinez Gomez --}}
 <x-tienda-layout>
-    <x-slot name="title">Iniciar sesión · El Rincón de las Plantas</x-slot>
+    <x-slot name="title">{{ __('messages.iniciar_sesion') }} · {{ __('messages.marca_nombre') }}</x-slot>
 
     <div class="contenedor flex justify-center py-16">
         <div class="w-full max-w-md">
             <div class="mb-8 text-center">
-                <p class="text-sm font-semibold uppercase tracking-[0.2em] text-marca-300">Cuenta</p>
-                <h1 class="mt-2 text-3xl font-semibold text-marca-900">Iniciar sesión</h1>
-                <p class="mt-2 text-sm text-marca-700/70">Accede para comprar y seguir tus pedidos.</p>
+                <p class="text-sm font-semibold uppercase tracking-[0.2em] text-marca-300">{{ __('messages.cuenta') }}</p>
+                <h1 class="mt-2 text-3xl font-semibold text-marca-900">{{ __('messages.iniciar_sesion') }}</h1>
+                <p class="mt-2 text-sm text-marca-700/70">{{ __('messages.login_descripcion') }}</p>
             </div>
 
             <div class="rounded-3xl border border-marca-100 bg-white px-6 py-8 shadow-suave sm:px-8">
@@ -56,9 +56,9 @@
 
             @if (Route::has('register'))
                 <p class="mt-6 text-center text-sm text-marca-700/70">
-                    ¿No tienes cuenta?
+                    {{ __('messages.sin_cuenta') }}
                     <a href="{{ route('register') }}" class="font-semibold text-marca-500 hover:text-marca-700">
-                        Regístrate
+                        {{ __('messages.registrate') }}
                     </a>
                 </p>
             @endif

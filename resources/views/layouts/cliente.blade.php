@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', __('messages.panel_cliente')) — {{ config('app.name', 'Tienda de plantas') }}</title>
+    <title>@yield('title', __('messages.panel_cliente')) — {{ __('messages.tienda_plantas') }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         :root {
@@ -56,6 +56,7 @@
     <nav class="cliente-nav">
         <a class="cliente-marca" href="{{ route('cliente.dashboard') }}">{{ __('messages.tienda_plantas') }}</a>
         <div>
+            @include('partials.language-selector')
             <a href="{{ route('cliente.dashboard') }}">{{ __('messages.mi_cuenta') }}</a>
             <a href="{{ route('profile.edit') }}">{{ __('messages.perfil') }}</a>
             <form method="POST" action="{{ route('logout') }}" style="display:inline">

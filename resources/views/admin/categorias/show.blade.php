@@ -6,13 +6,13 @@
 @section('content')
 <div class="admin-cabecera">
     <div>
-        <p class="admin-eyebrow">Categoría</p>
+        <p class="admin-eyebrow">{{ __('messages.categoria') }}</p>
         <h1>{{ $categoria->nombre }}</h1>
-        <p>Plantas asociadas a esta categoría.</p>
+        <p>{{ __('messages.categoria_plantas_ayuda') }}</p>
     </div>
     <div class="admin-acciones-bar">
-        <a href="{{ route('admin.categorias.edit', $categoria) }}" class="admin-btn">Editar</a>
-        <a href="{{ route('admin.categorias.index') }}" class="admin-btn-secundario">Volver</a>
+        <a href="{{ route('admin.categorias.edit', $categoria) }}" class="admin-btn">{{ __('messages.editar') }}</a>
+        <a href="{{ route('admin.categorias.index') }}" class="admin-btn-secundario">{{ __('messages.volver') }}</a>
     </div>
 </div>
 
@@ -20,22 +20,22 @@
     <div class="admin-resumen" style="margin-bottom: 1.25rem;">
         <div class="admin-stat">
             <span class="admin-stat-valor">{{ $categoria->plantas->count() }}</span>
-            <span class="admin-stat-etiqueta">Plantas en esta categoría</span>
+            <span class="admin-stat-etiqueta">{{ __('messages.plantas_categoria') }}</span>
         </div>
     </div>
 
     @if ($categoria->plantas->isEmpty())
         <div class="admin-vacio">
-            <p>Esta categoría todavía no tiene plantas.</p>
+            <p>{{ __('messages.categoria_vacia') }}</p>
         </div>
     @else
         <div class="admin-tabla-wrap">
             <table class="admin-tabla">
                 <thead>
                     <tr>
-                        <th>Planta</th>
-                        <th>Precio</th>
-                        <th>Stock</th>
+                        <th>{{ __('messages.planta') }}</th>
+                        <th>{{ __('messages.precio') }}</th>
+                        <th>{{ __('messages.stock') }}</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -50,7 +50,7 @@
                                 </span>
                             </td>
                             <td class="admin-acciones">
-                                <a href="{{ route('admin.plantas.show', $planta) }}" class="admin-enlace">Ver</a>
+                                <a href="{{ route('admin.plantas.show', $planta) }}" class="admin-enlace">{{ __('messages.ver') }}</a>
                             </td>
                         </tr>
                     @endforeach

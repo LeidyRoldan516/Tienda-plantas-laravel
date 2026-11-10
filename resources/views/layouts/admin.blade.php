@@ -6,7 +6,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', __('messages.panel_admin')) — El Rincón de las Plantas</title>
+    <title>@yield('title', __('messages.panel_admin')) — {{ __('messages.marca_nombre') }}</title>
 
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=outfit:300,400,500,600,700&display=swap" rel="stylesheet" />
@@ -514,35 +514,36 @@
     <div class="admin-shell">
         <aside class="admin-sidebar">
             <a class="admin-marca" href="{{ route('admin.dashboard') }}">
-                <img src="{{ asset('images/logo.jpg') }}" alt="El Rincón de las Plantas">
+                <img src="{{ asset('images/logo.jpg') }}" alt="{{ __('messages.marca_nombre') }}">
                 <span class="admin-marca-texto">
-                    <strong>Panel admin</strong>
-                    <span>Gestión</span>
+                    <strong>{{ __('messages.panel_administrador') }}</strong>
+                    <span>{{ __('messages.gestion') }}</span>
                 </span>
             </a>
 
             <nav class="admin-nav">
                 <a href="{{ route('admin.dashboard') }}"
                     class="{{ request()->routeIs('admin.dashboard') ? 'activo' : '' }}">
-                    <span class="admin-nav-dot"></span> Dashboard
+                    <span class="admin-nav-dot"></span> {{ __('messages.dashboard') }}
                 </a>
                 <a href="{{ route('admin.plantas.index') }}"
                     class="{{ request()->routeIs('admin.plantas.*') ? 'activo' : '' }}">
-                    <span class="admin-nav-dot"></span> Plantas
+                    <span class="admin-nav-dot"></span> {{ __('messages.plantas') }}
                 </a>
                 <a href="{{ route('admin.categorias.index') }}"
                     class="{{ request()->routeIs('admin.categorias.*') ? 'activo' : '' }}">
-                    <span class="admin-nav-dot"></span> Categorías
+                    <span class="admin-nav-dot"></span> {{ __('messages.categorias') }}
                 </a>
                 <a href="{{ route('home') }}">
-                    <span class="admin-nav-dot"></span> Ver tienda
+                    <span class="admin-nav-dot"></span> {{ __('messages.ver_tienda') }}
                 </a>
             </nav>
 
             <div class="admin-sidebar-foot">
+                @include('partials.language-selector')
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
-                    <button type="submit" class="admin-logout">Cerrar sesión</button>
+                    <button type="submit" class="admin-logout">{{ __('messages.cerrar_sesion') }}</button>
                 </form>
             </div>
         </aside>
