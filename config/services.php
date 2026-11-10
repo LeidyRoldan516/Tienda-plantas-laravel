@@ -18,6 +18,10 @@ return [
     |
     */
 
+    'monoverse' => [
+        'base_url' => env('MONOVERSE_BASE_URL', 'https://monoverse-414457182299.us-central1.run.app'),
+    ],
+
     'postmark' => [
         'key' => env('POSTMARK_API_KEY'),
     ],

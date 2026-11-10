@@ -1,14 +1,12 @@
 <?php
 
-/**
- * Autor: Simon Martinez Gomez
- */
-
 namespace App\Providers;
 
+use App\Interfaces\CatalogoNftInterface;
 use App\Interfaces\RecomendacionServiceInterface;
 use App\Services\GeminiRecomendacionService;
 use App\Services\LocalRecomendacionService;
+use App\Services\MonoverseCatalogoNftService;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
@@ -19,6 +17,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->bind(CatalogoNftInterface::class, MonoverseCatalogoNftService::class);
+
         // Inversión de dependencias: el controlador depende de la interfaz y aquí
         // se decide qué implementación concreta usar. Gemini (servicio externo) es
         // la principal; si se elige el driver "local" o no hay API key configurada,

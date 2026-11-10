@@ -10,6 +10,11 @@ $enlaces = [
         'texto' => __('messages.catalogo'),
         'activo' => request()->routeIs('catalogo.*'),
     ],
+    [
+        'ruta' => 'nfts.index',
+        'texto' => __('messages.nfts_aliados'),
+        'activo' => request()->routeIs('nfts.*'),
+    ],
 ];
 
 if (auth()->check()) {
