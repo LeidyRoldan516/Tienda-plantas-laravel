@@ -53,6 +53,11 @@ return [
     'recomendaciones_respuesta_invalida' => 'La respuesta del servicio no se pudo interpretar. Inténtalo de nuevo.',
     'recomendaciones_sin_coincidencias' => 'No encontramos coincidencias válidas en el catálogo. Revisa tus preferencias e inténtalo otra vez.',
     'recomendaciones_motivo_default' => 'Encaja con el perfil que registraste.',
+    'recomendaciones_local_explicacion' => 'Seleccionamos estas plantas del catálogo según tu espacio, la luz disponible y el tiempo que puedes dedicarles.',
+    'recomendaciones_local_motivo_espacio' => 'Se adapta bien al espacio que indicaste.',
+    'recomendaciones_local_motivo_luz' => 'Sus necesidades de luz coinciden con tu iluminación.',
+    'recomendaciones_local_motivo_cuidado' => 'Es fácil de cuidar y requiere poco mantenimiento.',
+    'recomendaciones_local_motivo_dedicacion' => 'Aprovecha el tiempo extra que puedes dedicarle.',
 
     'preferencias_titulo' => 'Tu perfil de preferencias',
     'preferencias_ayuda' => 'Completa estos datos antes de solicitar una recomendación.',

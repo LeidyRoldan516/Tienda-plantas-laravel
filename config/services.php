@@ -49,4 +49,12 @@ return [
         'model' => env('GEMINI_MODEL', 'gemini-3.6-flash'),
     ],
 
+    /*
+    | Implementación del recomendador: "gemini" (servicio externo) o "local" (respaldo).
+    | Si se elige "gemini" sin API key, se usa automáticamente el recomendador local.
+    */
+    'recomendaciones' => [
+        'driver' => env('RECOMENDACIONES_DRIVER', 'gemini'),
+    ],
+
 ];

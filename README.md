@@ -273,27 +273,75 @@ El locale por defecto es `es` (`APP_LOCALE=es`). Los textos de la interfaz está
 
 Antes de ejecutar Laravel, MySQL debe estar activo en MAMP.
 
-### 2. Iniciar el servidor de Laravel
+### 2. Elegir cómo cargar el frontend
 
-```bash
-php artisan serve
-```
-
-La aplicación estará disponible en:
+Hay dos formas de ejecutar la aplicación. En ambas, la aplicación estará disponible en:
 
 ```text
 http://127.0.0.1:8000
 ```
 
-### 3. Compilar los recursos del frontend
+#### Opción A: con Vite (desarrollo con recarga automática)
 
-En otra terminal:
+Recomendada cuando se están modificando vistas Blade, CSS o JavaScript. Los cambios se reflejan en el navegador sin recompilar.
+
+Terminal 1:
+
+```bash
+php artisan serve
+```
+
+Terminal 2:
 
 ```bash
 npm run dev
 ```
 
-Las dos terminales deben permanecer abiertas durante el desarrollo.
+Las dos terminales deben permanecer abiertas mientras se trabaja.
+
+#### Opción B: sin Vite (recursos compilados)
+
+Recomendada cuando solo se quiere usar o revisar la aplicación, sin modificar el frontend. Solo requiere una terminal.
+
+Compilar los recursos una vez:
+
+```bash
+npm run build
+```
+
+Iniciar el servidor:
+
+```bash
+php artisan serve
+```
+
+Los archivos compilados quedan en `public/build/`. Si se modifican vistas, CSS o JavaScript, se debe ejecutar `npm run build` nuevamente.
+
+### 3. Solución de problemas: la página carga sin estilos
+
+Si la página aparece sin estilos o sin JavaScript y `npm run dev` no está corriendo, probablemente quedó el archivo `public/hot`. Vite lo crea al iniciar `npm run dev` y, si el proceso se cierra de forma inesperada, Laravel sigue intentando cargar los recursos desde `http://localhost:5173`.
+
+Para solucionarlo, eliminar el archivo y compilar los recursos:
+
+En Windows PowerShell:
+
+```powershell
+Remove-Item public/hot
+npm run build
+```
+
+En macOS o Linux:
+
+```bash
+rm public/hot
+npm run build
+```
+
+### 4. Ejecutar las pruebas
+
+```bash
+php artisan test
+```
 
 ## Rutas principales
 

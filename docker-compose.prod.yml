@@ -1,0 +1,90 @@
+# Compose para la VM: NO construye nada, solo descarga la imagen de Artifact Registry.
+#
+# Uso en la VM (en la carpeta donde estan este archivo y el .env):
+#   docker compose -f docker-compose.prod.yml pull
+#   docker compose -f docker-compose.prod.yml up -d
+#   (o simplemente ./actualizar-vm.sh)
+#
+# Variables que deben estar en el .env de la VM:
+#   APP_IMAGE=smartinezg234/tienda-plantas:latest
+#   APP_URL=http://IP_DE_LA_VM          (puerto 80, sin ":8080")
+#   APP_KEY=base64:...        (php artisan key:generate --show)
+#   DB_PASSWORD=...           MYSQL_ROOT_PASSWORD=...
+#   GEMINI_API_KEY=...        (y el resto de claves que use la app)
+
+x-app-env: &app-env
+  env_file:
+    - path: .env
+      required: true
+  environment:
+    APP_ENV: production
+    APP_DEBUG: "false"
+    DB_CONNECTION: mysql
+    DB_HOST: db
+    DB_PORT: 3306
+    DB_DATABASE: tienda_plantas
+    DB_USERNAME: tienda
+    DB_PASSWORD: ${DB_PASSWORD:-tienda}
+    SESSION_DRIVER: database
+    CACHE_STORE: database
+    QUEUE_CONNECTION: database
+    LOG_CHANNEL: stderr
+
+services:
+  db:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: tienda_plantas
+      MYSQL_USER: tienda
+      MYSQL_PASSWORD: ${DB_PASSWORD:-tienda}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 --protocol=tcp -uroot -p$$MYSQL_ROOT_PASSWORD"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  app:
+    image: ${APP_IMAGE:?Define APP_IMAGE en el .env de la VM}
+    restart: unless-stopped
+    <<: *app-env
+    depends_on:
+      db:
+        condition: service_healthy
+    command: >
+      sh -c "php artisan storage:link || true;
+             php artisan migrate --force &&
+             php artisan db:seed --force &&
+             php artisan serve --host=0.0.0.0 --port=80"
+    ports:
+      - "80:80"   # puerto HTTP
+    volumes:
+      - storage_data:/app/storage/app
+
+  queue:
+    image: ${APP_IMAGE:?Define APP_IMAGE en el .env de la VM}
+    restart: unless-stopped
+    <<: *app-env
+    depends_on:
+      app:
+        condition: service_started
+    command: sh -c "sleep 15; php artisan queue:work --tries=3 --sleep=3"
+
+  # Solo accesible desde la propia VM (usa un tunel SSH: gcloud compute ssh VM -- -L 8081:localhost:8081)
+  phpmyadmin:
+    image: phpmyadmin:5
+    restart: unless-stopped
+    environment:
+      PMA_HOST: db
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:8081:80"
+
+volumes:
+  db_data:
+  storage_data:

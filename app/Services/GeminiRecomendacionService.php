@@ -7,6 +7,7 @@
 namespace App\Services;
 
 use App\Exceptions\RecomendacionIAException;
+use App\Interfaces\RecomendacionServiceInterface;
 use App\Models\PerfilPreferencias;
 use App\Models\Planta;
 use Gemini\Data\Content;
@@ -21,7 +22,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
-class RecomendacionIAService
+class GeminiRecomendacionService implements RecomendacionServiceInterface
 {
     /**
      * Solicita recomendaciones a Gemini y valida que solo
