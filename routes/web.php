@@ -11,6 +11,7 @@ use App\Http\Controllers\CarritoController;
 use App\Http\Controllers\CatalogoController;
 use App\Http\Controllers\Cliente\DashboardController as ClienteDashboardController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\NftController;
 use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RecomendacionController;
@@ -25,6 +26,8 @@ Route::get('/idioma/{locale}', function (string $locale) {
 })->name('idioma.cambiar');
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+
+Route::get('/nfts', [NftController::class, 'index'])->name('nfts.index');
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [ClienteDashboardController::class, 'index'])

@@ -57,6 +57,7 @@
         <a class="cliente-marca" href="{{ route('cliente.dashboard') }}">{{ __('messages.tienda_plantas') }}</a>
         <div>
             @include('partials.language-selector')
+            <a href="{{ route('nfts.index') }}">{{ __('messages.nfts_aliados') }}</a>
             <a href="{{ route('cliente.dashboard') }}">{{ __('messages.mi_cuenta') }}</a>
             <a href="{{ route('profile.edit') }}">{{ __('messages.perfil') }}</a>
             <form method="POST" action="{{ route('logout') }}" style="display:inline">
