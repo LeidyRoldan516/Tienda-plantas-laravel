@@ -32,7 +32,7 @@ class CategoriaController extends Controller
         Categoria::create($datos);
 
         return redirect()->route('admin.categorias.index')
-            ->with('mensaje', 'Categoría creada.');
+            ->with('mensaje', __('messages.categoria_creada'));
     }
 
     public function show(Categoria $categoria): View
@@ -59,20 +59,20 @@ class CategoriaController extends Controller
         $categoria->update($datos);
 
         return redirect()->route('admin.categorias.index')
-            ->with('mensaje', 'Categoría actualizada.');
+            ->with('mensaje', __('messages.categoria_actualizada'));
     }
 
     public function destroy(Categoria $categoria): RedirectResponse
     {
         if ($categoria->plantas()->exists()) {
             return back()->withErrors([
-                'categoria' => 'No se puede eliminar una categoría que tiene plantas.',
+                'categoria' => __('messages.categoria_con_plantas'),
             ]);
         }
 
         $categoria->delete();
 
         return redirect()->route('admin.categorias.index')
-            ->with('mensaje', 'Categoría eliminada.');
+            ->with('mensaje', __('messages.categoria_eliminada'));
     }
 }

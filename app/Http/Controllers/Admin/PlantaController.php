@@ -30,7 +30,7 @@ class PlantaController extends Controller
         Planta::create($this->datosValidados($request));
 
         return redirect()->route('admin.dashboard')
-            ->with('success', 'Planta creada correctamente.');
+            ->with('success', __('messages.planta_creada'));
     }
 
     public function show(Planta $planta): View
@@ -53,20 +53,20 @@ class PlantaController extends Controller
         $planta->update($this->datosValidados($request));
 
         return redirect()->route('admin.plantas.index')
-            ->with('success', 'Planta actualizada correctamente.');
+            ->with('success', __('messages.planta_actualizada'));
     }
 
     public function destroy(Planta $planta): RedirectResponse
     {
         if ($planta->itemsPedido()->exists() || $planta->itemsCarrito()->exists()) {
             return redirect()->back()
-                ->with('error', 'No se puede eliminar una planta presente en pedidos o carritos.');
+                ->with('error', __('messages.planta_en_uso'));
         }
 
         $planta->delete();
 
         return redirect()->route('admin.plantas.index')
-            ->with('success', 'Planta eliminada correctamente.');
+            ->with('success', __('messages.planta_eliminada'));
     }
 
     private function datosValidados(Request $request): array

@@ -77,6 +77,9 @@ Reglas:
 - Considera experiencia, espacio, iluminación, tiempo de cuidado y mascotas.
 PROMPT;
 
+        $idioma = app()->getLocale() === 'en' ? 'English' : 'español';
+        $instrucciones .= "\nEscribe explicacion y motivo en {$idioma}. Conserva los nombres del catálogo y las claves JSON sin traducir.";
+
         $contenidoUsuario = json_encode([
             'preferencias' => $preferencias,
             'catalogo' => $catalogo,

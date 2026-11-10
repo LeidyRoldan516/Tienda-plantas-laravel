@@ -45,7 +45,7 @@ class CarritoController extends Controller
 
         if ($cantidadNueva > $planta->stock) {
             return back()->withErrors([
-                'cantidad' => 'No hay suficientes unidades disponibles.',
+                'cantidad' => __('messages.stock_insuficiente'),
             ]);
         }
 
@@ -63,7 +63,7 @@ class CarritoController extends Controller
         }
 
         return redirect()->route('carrito.index')
-            ->with('mensaje', 'Planta agregada al carrito.');
+            ->with('mensaje', __('messages.carrito_agregada'));
     }
 
     public function actualizar(Request $request, ItemCarrito $item): RedirectResponse
@@ -79,14 +79,14 @@ class CarritoController extends Controller
 
         if ($datos['cantidad'] > $item->planta->stock) {
             return back()->withErrors([
-                'cantidad' => 'No hay suficientes unidades disponibles.',
+                'cantidad' => __('messages.stock_insuficiente'),
             ]);
         }
 
         $item->update(['cantidad' => $datos['cantidad']]);
 
         return redirect()->route('carrito.index')
-            ->with('mensaje', 'Cantidad actualizada.');
+            ->with('mensaje', __('messages.carrito_actualizado'));
     }
 
     public function eliminar(ItemCarrito $item): RedirectResponse
@@ -99,6 +99,6 @@ class CarritoController extends Controller
         $item->delete();
 
         return redirect()->route('carrito.index')
-            ->with('mensaje', 'Planta retirada del carrito.');
+            ->with('mensaje', __('messages.carrito_retirada'));
     }
 }

@@ -1,5 +1,5 @@
 <img
     src="{{ asset('images/logo.jpg') }}"
-    alt="El Rincón de las Plantas"
+    alt="{{ __('messages.marca_nombre') }}"
     {{ $attributes->merge(['class' => 'object-contain']) }}
 >

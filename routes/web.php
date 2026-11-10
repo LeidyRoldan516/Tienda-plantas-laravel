@@ -16,6 +16,14 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RecomendacionController;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/idioma/{locale}', function (string $locale) {
+    abort_unless(in_array($locale, ['es', 'en'], true), 404);
+
+    session(['locale' => $locale]);
+
+    return redirect()->back();
+})->name('idioma.cambiar');
+
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::middleware('auth')->group(function () {

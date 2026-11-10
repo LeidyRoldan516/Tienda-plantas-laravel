@@ -69,7 +69,7 @@ class AuthenticationTest extends TestCase
     {
         $user = User::factory()->cliente()->create();
 
-        $response = $this->actingAs($user)->get('/admin');
+        $response = $this->actingAs($user)->get(route('admin.dashboard'));
 
         $response->assertForbidden();
     }
