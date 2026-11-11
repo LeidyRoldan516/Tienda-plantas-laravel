@@ -18,11 +18,11 @@
             <div class="max-w-xl animate-[fadeUp_0.8s_ease-out]">
                 <x-application-logo class="mb-8 h-24 w-auto sm:h-28" />
 
-                <h1 class="text-4xl font-semibold tracking-tight text-marca-900 sm:text-5xl">
+               <h1 class="text-4xl font-bold tracking-tight text-white drop-shadow-lg sm:text-5xl">
                     {{ __('messages.inicio_titulo') }}
                 </h1>
 
-                <p class="mt-4 max-w-md text-base leading-relaxed text-marca-700/80 sm:text-lg">
+                <p class="mt-4 max-w-md text-base leading-relaxed text-white drop-shadow-md sm:text-lg">
                     {{ __('messages.inicio_descripcion') }}
                 </p>
 

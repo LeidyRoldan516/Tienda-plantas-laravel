@@ -294,4 +294,6 @@ return [
     'paginacion_hasta' => 'a',
     'paginacion_de' => 'de',
     'paginacion_resultados_etiqueta' => 'resultados',
+    'mostrar' => 'Mostrar',
+    'ocultar' => 'Ocultar',
 ];
