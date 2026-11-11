@@ -290,4 +290,6 @@ return [
     'paginacion_hasta' => 'to',
     'paginacion_de' => 'of',
     'paginacion_resultados_etiqueta' => 'results',
+    'mostrar' => 'Show',
+    'ocultar' => 'Hide',
 ];
